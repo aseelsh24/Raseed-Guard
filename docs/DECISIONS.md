@@ -16,3 +16,8 @@
 ## 4. Minimum Logs
 - **Decision**: Require at least 2 logs to calculate a rate.
 - **Reasoning**: A rate represents change over time. A single point has no rate.
+
+## 5. UI State Management and Navigation
+- **Decision**: The Dashboard ViewModel fetches all plans and their corresponding logs to generate a list of predictions.
+- **Reasoning**: The app supports multiple plans simultaneously.
+- **Implication**: `DashboardUiState` emits a `List<PlanWithPrediction>`. Navigation arguments are used to pass `planId` for editing.
