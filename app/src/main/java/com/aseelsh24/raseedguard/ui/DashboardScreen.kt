@@ -19,7 +19,7 @@ fun DashboardScreen(
     onNavigateToAddPlan: () -> Unit,
     onNavigateToUpdate: () -> Unit,
     onNavigateToInsights: () -> Unit,
-    viewModel: DashboardViewModel = viewModel()
+    viewModel: DashboardViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
