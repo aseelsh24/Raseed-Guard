@@ -7,7 +7,7 @@
 - تتبع الرصيد المتبقي
 - تنبيهات ذكية عند قرب نفاد الرصيد
 - واجهة عربية (RTL)
-- يعمل بدون إنترنت (Offline-first)
+- يعمل بدون إنترنت (Offline-first) باستخدام Room Database
 
 ## بيئة التطوير
 - Android Studio Iguana or later
@@ -44,5 +44,10 @@
 ## الهيكلية
 يتبع المشروع معمارية Clean Architecture:
 - `core/`: منطق الأعمال والنطاق (Domain).
-- `data/`: طبقة البيانات (Repositories).
-- `ui/`: واجهات المستخدم باستخدام Jetpack Compose.
+- `data/`: طبقة البيانات (Repositories & Local Data Source via Room).
+- `ui/`: واجهات المستخدم باستخدام Jetpack Compose و ViewModels.
+
+## تكامل البيانات (Data Integration)
+- **Persistence**: يتم تخزين البيانات محليًا باستخدام Room.
+- **Mapping**: يتم تحويل `Entity` إلى `Domain Model` في طبقة المستودعات (Repository Layer).
+- **UI State**: تعتمد واجهة المستخدم على `Flow` لمراقبة التغييرات في قاعدة البيانات وتحديث الواجهة تلقائيًا.

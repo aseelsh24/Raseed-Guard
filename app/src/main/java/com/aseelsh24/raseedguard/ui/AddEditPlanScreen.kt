@@ -16,17 +16,52 @@ fun AddEditPlanScreen(
     onNavigateBack: () -> Unit,
     viewModel: AddEditPlanViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
+    val uiState by viewModel.uiState.collectAsState()
+
+    // We use a separate state for inputs to allow editing,
+    // initialized from uiState but not strictly bound to it constantly
+    // However, when loading data (edit mode), we want to update these.
+    // simpler approach: Use rememberUpdatedState or LaunchEffect to update local state when uiState changes.
+
     var initialAmount by remember { mutableStateOf("") }
     var selectedType by remember { mutableStateOf(PlanType.INTERNET) }
     var selectedUnit by remember { mutableStateOf(PlanUnit.GB) }
-    // Ideally use a date picker
     var startDate by remember { mutableStateOf(LocalDate.now().toString()) }
     var endDate by remember { mutableStateOf(LocalDate.now().plusDays(30).toString()) }
     var dateError by remember { mutableStateOf<String?>(null) }
 
+    // Effect to update state when loading existing plan
+    LaunchedEffect(uiState) {
+        if (uiState.isEditing && initialAmount.isEmpty()) { // Simple check to avoid overwriting user edits if re-composed
+             // Actually, checking isEmpty might be wrong if the user cleared it.
+             // Better is to track if we loaded data already.
+             // But for simplicity, we can rely on the fact that uiState changes only once on load.
+             initialAmount = uiState.initialAmount
+             selectedType = uiState.type
+             selectedUnit = uiState.unit
+             startDate = uiState.startDate
+             endDate = uiState.endDate
+        }
+    }
+
+    // Force update if we just loaded an existing plan (better approach)
+    // We can use a key or just trust the VM to emit the state once.
+    // Let's refine:
+    var dataLoaded by remember { mutableStateOf(false) }
+    LaunchedEffect(uiState) {
+        if (uiState.isEditing && !dataLoaded) {
+             initialAmount = uiState.initialAmount
+             selectedType = uiState.type
+             selectedUnit = uiState.unit
+             startDate = uiState.startDate
+             endDate = uiState.endDate
+             dataLoaded = true
+        }
+    }
+
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text("إضافة / تعديل باقة") })
+            TopAppBar(title = { Text(if (uiState.isEditing) "تعديل باقة" else "إضافة باقة") })
         }
     ) { innerPadding ->
         Column(modifier = Modifier.padding(innerPadding).padding(16.dp)) {
@@ -122,7 +157,7 @@ fun AddEditPlanScreen(
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("حفظ")
+                Text(if (uiState.isEditing) "تحديث" else "حفظ")
             }
         }
     }

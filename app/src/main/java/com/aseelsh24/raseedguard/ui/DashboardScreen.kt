@@ -1,6 +1,11 @@
 package com.aseelsh24.raseedguard.ui
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -12,12 +17,14 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.aseelsh24.raseedguard.core.PredictionResult
 import com.aseelsh24.raseedguard.core.RiskLevel
 import java.time.format.DateTimeFormatter
+import com.aseelsh24.raseedguard.core.Plan
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DashboardScreen(
     onNavigateToAddPlan: () -> Unit,
     onNavigateToUpdate: () -> Unit,
+    onNavigateToEdit: (String) -> Unit,
     onNavigateToInsights: () -> Unit,
     viewModel: DashboardViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
@@ -30,20 +37,6 @@ fun DashboardScreen(
     ) { innerPadding ->
         Column(modifier = Modifier.padding(innerPadding)) {
 
-            when (val state = uiState) {
-                is DashboardUiState.Loading -> {
-                    Text("جاري التحميل...", modifier = Modifier.padding(16.dp))
-                }
-                is DashboardUiState.Success -> {
-                    PredictionCard(state.prediction)
-                }
-                is DashboardUiState.Error -> {
-                    Text("خطأ: ${state.message}", color = Color.Red, modifier = Modifier.padding(16.dp))
-                }
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
             Text(text = "إجراءات سريعة", style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(8.dp))
 
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.padding(8.dp)) {
@@ -54,19 +47,49 @@ fun DashboardScreen(
                     Text("تحديث")
                 }
             }
-             Button(onClick = onNavigateToInsights, modifier = Modifier.padding(8.dp)) {
-                Text("إحصائيات تفصيلية")
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            when (val state = uiState) {
+                is DashboardUiState.Loading -> {
+                    Text("جاري التحميل...", modifier = Modifier.padding(16.dp))
+                }
+                is DashboardUiState.Success -> {
+                    if (state.plans.isEmpty()) {
+                        Text("لا توجد باقات. أضف باقة جديدة.", modifier = Modifier.padding(16.dp))
+                    } else {
+                        LazyColumn(
+                            contentPadding = PaddingValues(16.dp),
+                            verticalArrangement = Arrangement.spacedBy(16.dp)
+                        ) {
+                            items(state.plans) { planWithPrediction ->
+                                PredictionCard(
+                                    plan = planWithPrediction.plan,
+                                    prediction = planWithPrediction.prediction,
+                                    onDelete = { viewModel.deletePlan(planWithPrediction.plan) },
+                                    onEdit = { onNavigateToEdit(planWithPrediction.plan.id) }
+                                )
+                            }
+                        }
+                    }
+                }
+                is DashboardUiState.Error -> {
+                    Text("خطأ: ${state.message}", color = Color.Red, modifier = Modifier.padding(16.dp))
+                }
             }
         }
     }
 }
 
 @Composable
-fun PredictionCard(prediction: PredictionResult) {
+fun PredictionCard(
+    plan: Plan,
+    prediction: PredictionResult,
+    onDelete: () -> Unit,
+    onEdit: () -> Unit
+) {
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
+        modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
             containerColor = when (prediction.riskLevel) {
                 RiskLevel.SAFE -> Color(0xFFE8F5E9) // Light Green
@@ -76,6 +99,24 @@ fun PredictionCard(prediction: PredictionResult) {
         )
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                 Text(
+                    text = "${plan.type.name} - ${plan.unit.name}",
+                    style = MaterialTheme.typography.titleMedium
+                )
+                Row {
+                    IconButton(onClick = onEdit) {
+                        Icon(Icons.Default.Edit, contentDescription = "تعديل")
+                    }
+                    IconButton(onClick = onDelete) {
+                        Icon(Icons.Default.Delete, contentDescription = "حذف")
+                    }
+                }
+            }
+
             Text(
                 text = "المتبقي: %.2f".format(prediction.remainingNormalized),
                 style = MaterialTheme.typography.headlineMedium
