@@ -34,6 +34,13 @@
 ./gradlew assembleDebug
 ```
 
+## ملاحظات الاختبار (Testing Notes)
+**تنبيه:** اختبارات الوحدة (Unit Tests) تتطلب بيئة Android SDK لتشغيلها بنجاح. لا يمكن تشغيلها داخل بيئة Jules الحالية. يرجى تشغيلها محليًا أو في بيئة CI مجهزة.
+
+```bash
+./gradlew test
+```
+
 ## الهيكلية
 يتبع المشروع معمارية Clean Architecture:
 - `core/`: منطق الأعمال والنطاق (Domain).
