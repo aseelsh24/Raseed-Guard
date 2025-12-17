@@ -1,11 +1,25 @@
-# OS / Editors
-.DS_Store
-*.swp
-*.tmp
-
-# Android/Gradle (future)
+# Gradle
 .gradle/
 build/
+app/build/
+
+# Android
 *.iml
 .idea/
-.local.properties
+.DS_Store
+local.properties
+captures/
+.externalNativeBuild/
+.cxx/
+*.apk
+*.ap_
+
+# SDK
+android-sdk/
+commandlinetools.zip
+
+# Ignore Gradle project-specific cache directory
+.gradle
+
+# Ignore Gradle build output directory
+build

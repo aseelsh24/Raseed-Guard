@@ -1,16 +1,41 @@
-# Raseed Guard (رصيدك)
+# Raseed Guard
 
-Android app to track mobile bundles (internet/minutes), estimate consumption from periodic updates, and warn the user before:
-- bundle expiry (3 days, 5 hours)
-- predicted early depletion based on usage
+تطبيق تذكير بانتهاء الباقة والتنبؤ بنفاد الرصيد.
 
-## Docs
-See `docs/`:
-- PRD.md
-- USER_STORIES.md
-- BACKLOG.md
+## المميزات الرئيسية
+- تتبع تاريخ انتهاء الباقة
+- تتبع الرصيد المتبقي
+- تنبيهات ذكية عند قرب نفاد الرصيد
+- واجهة عربية (RTL)
+- يعمل بدون إنترنت (Offline-first)
 
-## MVP Scope
-- Manual entry (no SMS/USSD)
-- Offline-first
-- Arabic RTL friendly UI
+## بيئة التطوير
+- Android Studio Iguana or later
+- Kotlin 1.9+
+- Jetpack Compose
+- Java 17
+
+## تعليمات البناء والتشغيل
+
+### متطلبات النظام
+لتشغيل المشروع وبناء ملف APK، تحتاج إلى تثبيت:
+- JDK 17
+- Android SDK (API Level 34)
+
+### البناء (في Android Studio)
+1. افتح المشروع في Android Studio.
+2. انتظر حتى تكتمل عملية Gradle Sync.
+3. اضغط على زر التشغيل (Run) لتثبيت التطبيق على المحاكي أو الجهاز الحقيقي.
+
+### البناء (عبر سطر الأوامر)
+**ملاحظة:** يتطلب هذا الأمر وجود Android SDK مثبتًا ومتغير `ANDROID_HOME` معدًا بشكل صحيح. لا يمكن تنفيذ هذا الأمر في بيئات لا تحتوي على Android SDK (مثل Jules).
+
+```bash
+./gradlew assembleDebug
+```
+
+## الهيكلية
+يتبع المشروع معمارية Clean Architecture:
+- `core/`: منطق الأعمال والنطاق (Domain).
+- `data/`: طبقة البيانات (Repositories).
+- `ui/`: واجهات المستخدم باستخدام Jetpack Compose.
