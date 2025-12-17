@@ -1,93 +1,75 @@
 package com.aseelsh24.raseedguard.ui
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.aseelsh24.raseedguard.core.BalanceLog
 import com.aseelsh24.raseedguard.core.Plan
 import com.aseelsh24.raseedguard.core.PlanType
-import com.aseelsh24.raseedguard.core.Unit as PlanUnit
-import com.aseelsh24.raseedguard.data.repository.PlanRepository
+import com.aseelsh24.raseedguard.core.PredictionResult
+import com.aseelsh24.raseedguard.core.Unit
+import com.aseelsh24.raseedguard.core.UsagePredictor
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
-import java.time.LocalTime
 import java.util.UUID
 
-class AddEditPlanViewModel(
-    private val planRepository: PlanRepository,
-    savedStateHandle: SavedStateHandle
-) : ViewModel() {
+class DashboardViewModel : ViewModel() {
 
-    private val planId: String? = savedStateHandle[Destinations.PLAN_ID_ARG]
+    private val _uiState = MutableStateFlow<DashboardUiState>(DashboardUiState.Loading)
+    val uiState: StateFlow<DashboardUiState> = _uiState.asStateFlow()
 
-    private val _uiState = MutableStateFlow(AddEditPlanUiState())
-    val uiState: StateFlow<AddEditPlanUiState> = _uiState.asStateFlow()
+    private val usagePredictor = UsagePredictor()
 
     init {
-        if (planId != null) {
-            viewModelScope.launch {
-                val plan = planRepository.getPlanById(planId)
-                if (plan != null) {
-                    _uiState.value = AddEditPlanUiState(
-                        initialAmount = plan.initialAmount.toString(),
-                        type = plan.type,
-                        unit = plan.unit,
-                        startDate = plan.startAt.toLocalDate().toString(),
-                        endDate = plan.endAt.toLocalDate().toString(),
-                        isEditing = true
-                    )
-                }
-            }
-        }
+        loadData()
     }
 
-    fun savePlan(
-        type: PlanType,
-        startDate: java.time.LocalDate,
-        endDate: java.time.LocalDate,
-        initialAmount: String,
-        unit: PlanUnit
-    ) {
-        val amount = initialAmount.toDoubleOrNull() ?: return
-
-        val startAt = LocalDateTime.of(startDate, LocalTime.MIDNIGHT)
-        val endAt = LocalDateTime.of(endDate, LocalTime.MAX)
-
+    private fun loadData() {
         viewModelScope.launch {
-            if (planId != null) {
-                // Update
-                val updatedPlan = Plan(
-                    id = planId,
-                    type = type,
-                    startAt = startAt,
-                    endAt = endAt,
-                    initialAmount = amount,
-                    unit = unit
-                )
-                planRepository.updatePlan(updatedPlan)
-            } else {
-                // Insert
+            try {
+                // ---- Mock Data (temporary until Room integration is complete) ----
+                val now = LocalDateTime.now()
+
                 val plan = Plan(
                     id = UUID.randomUUID().toString(),
-                    type = type,
-                    startAt = startAt,
-                    endAt = endAt,
-                    initialAmount = amount,
-                    unit = unit
+                    type = PlanType.INTERNET,
+                    startAt = now.minusDays(10),
+                    endAt = now.plusDays(20),
+                    initialAmount = 10.0, // 10 GB
+                    unit = Unit.GB
                 )
-                planRepository.insertPlan(plan)
+
+                val logs = listOf(
+                    BalanceLog(plan.id, now.minusDays(10), 10.0), // 10 GB
+                    BalanceLog(plan.id, now.minusDays(5), 8.0),   // 8 GB (Consumed 2 GB in 5 days -> 0.4 GB/day)
+                    BalanceLog(plan.id, now.minusDays(1), 7.0)    // 7 GB (Consumed 1 GB in 4 days -> 0.25 GB/day)
+                )
+
+                val predictionAny = usagePredictor.predict(plan, logs, now)
+
+                // ✅ FIX: Do not assume predict() always returns PredictionResult
+                _uiState.value = when (predictionAny) {
+                    is PredictionResult -> DashboardUiState.Success(
+                        plan = plan,
+                        prediction = predictionAny
+                    )
+                    else -> DashboardUiState.Error(
+                        message = "Unable to calculate usage prediction (insufficient data or invalid inputs)."
+                    )
+                }
+            } catch (e: Exception) {
+                _uiState.value = DashboardUiState.Error(
+                    message = e.message ?: "Unexpected error"
+                )
             }
         }
     }
 }
 
-data class AddEditPlanUiState(
-    val initialAmount: String = "",
-    val type: PlanType = PlanType.INTERNET,
-    val unit: PlanUnit = PlanUnit.GB,
-    val startDate: String = java.time.LocalDate.now().toString(),
-    val endDate: String = java.time.LocalDate.now().plusDays(30).toString(),
-    val isEditing: Boolean = false
-)
+sealed class DashboardUiState {
+    object Loading : DashboardUiState()
+    data class Success(val plan: Plan, val prediction: PredictionResult) : DashboardUiState()
+    data class Error(val message: String) : DashboardUiState()
+}
