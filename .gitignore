@@ -1,0 +1,11 @@
+# OS / Editors
+.DS_Store
+*.swp
+*.tmp
+
+# Android/Gradle (future)
+.gradle/
+build/
+*.iml
+.idea/
+.local.properties
