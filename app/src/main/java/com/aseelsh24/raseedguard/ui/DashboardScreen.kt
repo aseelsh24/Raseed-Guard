@@ -19,7 +19,7 @@ fun DashboardScreen(
     onNavigateToAddPlan: () -> Unit,
     onNavigateToUpdate: () -> Unit,
     onNavigateToInsights: () -> Unit,
-    viewModel: DashboardViewModel = viewModel()
+    viewModel: DashboardViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -33,6 +33,9 @@ fun DashboardScreen(
             when (val state = uiState) {
                 is DashboardUiState.Loading -> {
                     Text("جاري التحميل...", modifier = Modifier.padding(16.dp))
+                }
+                is DashboardUiState.Empty -> {
+                    Text("لا توجد باقات. يرجى إضافة باقة جديدة.", modifier = Modifier.padding(16.dp))
                 }
                 is DashboardUiState.Success -> {
                     PredictionCard(state.prediction)
