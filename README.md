@@ -34,6 +34,12 @@
 ./gradlew assembleDebug
 ```
 
+## CI Build
+يستخدم المشروع GitHub Actions لبناء التطبيق واختباره تلقائيًا.
+- يتم تشغيل الـ Workflow عند كل `push` أو `pull_request` على فروع `main` و `feature/**`.
+- يقوم النظام ببناء نسخة Debug APK وتشغيل اختبارات الوحدة (Unit Tests).
+- يمكن تحميل ملف الـ APK الناتج من تبويب "Actions" في GitHub تحت قسم "Artifacts".
+
 ## ملاحظات الاختبار (Testing Notes)
 **تنبيه:** اختبارات الوحدة (Unit Tests) تتطلب بيئة Android SDK لتشغيلها بنجاح. لا يمكن تشغيلها داخل بيئة Jules الحالية. يرجى تشغيلها محليًا أو في بيئة CI مجهزة.
 
