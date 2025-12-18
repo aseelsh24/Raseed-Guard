@@ -4,6 +4,7 @@ import java.time.Duration
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 import kotlin.math.abs
+import com.aseelsh24.raseedguard.core.Unit as PlanUnit
 
 class UsagePredictor {
 
@@ -23,7 +24,7 @@ class UsagePredictor {
      * Calculates the daily consumption rate based on the logs.
      * Returns null if there are fewer than 2 valid logs or if the time span is too small.
      */
-    fun dailyRateFromLogs(logs: List<BalanceLog>, unit: Unit): Double? {
+    fun dailyRateFromLogs(logs: List<BalanceLog>, unit: PlanUnit): Double? {
         if (logs.size < 2) return null
 
         val sortedLogs = logs.sortedBy { it.loggedAt }
@@ -125,11 +126,11 @@ class UsagePredictor {
         return remaining / daysUntilEnd
     }
 
-    fun normalize(amount: Double, unit: Unit): Double {
+    fun normalize(amount: Double, unit: PlanUnit): Double {
         return when (unit) {
-            Unit.MB -> amount
-            Unit.GB -> amount * 1024
-            Unit.MINUTES -> amount
+            PlanUnit.MB -> amount
+            PlanUnit.GB -> amount * 1024
+            PlanUnit.MINUTES -> amount
         }
     }
 
