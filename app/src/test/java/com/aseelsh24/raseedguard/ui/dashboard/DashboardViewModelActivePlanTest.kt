@@ -2,6 +2,8 @@ package com.aseelsh24.raseedguard.ui.dashboard
 
 import com.aseelsh24.raseedguard.core.BalanceLog
 import com.aseelsh24.raseedguard.core.Plan
+import com.aseelsh24.raseedguard.core.PlanType
+import com.aseelsh24.raseedguard.core.Unit as PlanUnit
 import com.aseelsh24.raseedguard.data.repository.BalanceLogRepository
 import com.aseelsh24.raseedguard.data.repository.PlanRepository
 import com.aseelsh24.raseedguard.data.repository.SettingsRepository
@@ -52,12 +54,11 @@ class DashboardViewModelActivePlanTest {
     fun `auto-picks first plan when active plan is null`() = runTest(testDispatcher) {
         val plan = Plan(
             id = "plan1",
-            name = "Test Plan",
-            totalInternet = 100.0,
-            totalMinutes = 100.0,
+            type = PlanType.INTERNET,
             startAt = LocalDateTime.now(),
             endAt = LocalDateTime.now().plusDays(30),
-            price = 50.0
+            initialAmount = 100.0,
+            unit = PlanUnit.GB
         )
         planRepository.addPlan(plan)
 
@@ -75,12 +76,11 @@ class DashboardViewModelActivePlanTest {
 
         val plan = Plan(
             id = "new_plan",
-            name = "New Plan",
-            totalInternet = 100.0,
-            totalMinutes = 100.0,
+            type = PlanType.INTERNET,
             startAt = LocalDateTime.now(),
             endAt = LocalDateTime.now().plusDays(30),
-            price = 50.0
+            initialAmount = 100.0,
+            unit = PlanUnit.GB
         )
         planRepository.addPlan(plan)
 
@@ -105,10 +105,6 @@ class FakePlanRepository : PlanRepository {
     override suspend fun insertPlan(plan: Plan) {
         addPlan(plan)
     }
-
-    override suspend fun updatePlan(plan: Plan) {}
-
-    override suspend fun deletePlan(plan: Plan) {}
 }
 
 class FakeBalanceLogRepository : BalanceLogRepository {
