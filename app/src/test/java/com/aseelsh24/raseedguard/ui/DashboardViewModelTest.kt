@@ -88,8 +88,6 @@ class FakePlanRepository : PlanRepository {
 
     override fun getAllPlans() = plansFlow
 
-    override fun getPlan(id: String) = flowOf(plansFlow.value.find { it.id == id })
-
     override suspend fun insertPlan(plan: Plan) {
         // no-op
     }
