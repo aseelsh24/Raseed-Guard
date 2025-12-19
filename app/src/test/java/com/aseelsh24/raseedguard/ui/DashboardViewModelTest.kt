@@ -27,6 +27,7 @@ class DashboardViewModelTest {
     private lateinit var viewModel: DashboardViewModel
     private lateinit var planRepository: FakePlanRepository
     private lateinit var balanceLogRepository: FakeBalanceLogRepository
+    private lateinit var settingsRepository: FakeSettingsRepository
     private val testDispatcher = StandardTestDispatcher()
 
     @Before
@@ -34,7 +35,8 @@ class DashboardViewModelTest {
         Dispatchers.setMain(testDispatcher)
         planRepository = FakePlanRepository()
         balanceLogRepository = FakeBalanceLogRepository()
-        viewModel = DashboardViewModel(planRepository, balanceLogRepository)
+        settingsRepository = FakeSettingsRepository()
+        viewModel = DashboardViewModel(planRepository, balanceLogRepository, settingsRepository)
     }
 
     @After
@@ -122,5 +124,14 @@ class FakeBalanceLogRepository : BalanceLogRepository {
 
     override suspend fun insertLog(log: BalanceLog) {
         // no-op
+    }
+}
+
+class FakeSettingsRepository : com.aseelsh24.raseedguard.data.repository.SettingsRepository {
+    private val _activePlanId = MutableStateFlow<String?>(null)
+    override val activePlanId: Flow<String?> = _activePlanId
+
+    override suspend fun setActivePlanId(id: String?) {
+        _activePlanId.value = id
     }
 }
