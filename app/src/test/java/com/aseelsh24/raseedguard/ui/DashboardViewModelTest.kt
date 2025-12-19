@@ -5,8 +5,9 @@ import com.aseelsh24.raseedguard.data.repository.BalanceLogRepository
 import com.aseelsh24.raseedguard.data.repository.PlanRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
@@ -80,16 +81,33 @@ class DashboardViewModelTest {
 }
 
 class FakePlanRepository : PlanRepository {
+    // Expose plans so tests can inspect them if needed
     private val plansFlow = MutableStateFlow<List<Plan>>(emptyList())
 
+    // Helper for tests to set state
     fun setPlans(plans: List<Plan>) {
         plansFlow.value = plans
     }
 
-    override fun getAllPlans() = plansFlow
+    // Helper to get current plans synchronously for assertions
+    val plans: List<Plan>
+        get() = plansFlow.value
+
+    override fun getAllPlans(): Flow<List<Plan>> = plansFlow
+
+    override fun getPlan(id: String): Flow<Plan?> {
+        return plansFlow.map { plans -> plans.find { it.id == id } }
+    }
 
     override suspend fun insertPlan(plan: Plan) {
-        // no-op
+        val currentPlans = plansFlow.value.toMutableList()
+        val index = currentPlans.indexOfFirst { it.id == plan.id }
+        if (index != -1) {
+            currentPlans[index] = plan
+        } else {
+            currentPlans.add(plan)
+        }
+        plansFlow.value = currentPlans
     }
 }
 

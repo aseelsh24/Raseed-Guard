@@ -12,6 +12,9 @@ interface PlanDao {
     @Query("SELECT * FROM plans")
     fun getAllPlans(): Flow<List<PlanEntity>>
 
+    @Query("SELECT * FROM plans WHERE id = :id")
+    fun getPlan(id: String): Flow<PlanEntity?>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPlan(plan: PlanEntity)
 }

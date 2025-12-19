@@ -1,5 +1,6 @@
 package com.aseelsh24.raseedguard.ui
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aseelsh24.raseedguard.core.Plan
@@ -9,16 +10,63 @@ import com.aseelsh24.raseedguard.data.repository.PlanRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
+import java.time.LocalTime
 import java.util.UUID
 
 class AddEditPlanViewModel(
+    savedStateHandle: SavedStateHandle,
     private val planRepository: PlanRepository
 ) : ViewModel() {
 
+    private val planId: String? = savedStateHandle["planId"]
+
     private val _uiState = MutableStateFlow(AddEditPlanUiState())
     val uiState: StateFlow<AddEditPlanUiState> = _uiState.asStateFlow()
+
+    init {
+        if (planId != null) {
+            loadPlan(planId)
+        }
+    }
+
+    private fun loadPlan(id: String) {
+        _uiState.value = _uiState.value.copy(isLoading = true)
+        viewModelScope.launch {
+            val plan = planRepository.getPlan(id).first()
+            if (plan != null) {
+                _uiState.value = AddEditPlanUiState(
+                    planId = plan.id,
+                    type = plan.type,
+                    startAt = plan.startAt,
+                    endAt = plan.endAt,
+                    initialAmount = plan.initialAmount.toString(),
+                    unit = plan.unit,
+                    isLoading = false
+                )
+            } else {
+                _uiState.value = _uiState.value.copy(isLoading = false) // Plan not found?
+            }
+        }
+    }
+
+    fun updateType(type: PlanType) {
+        val currentUnit = _uiState.value.unit
+        val newUnit = if (type == PlanType.VOICE) PlanUnit.MINUTES else {
+             if (currentUnit == PlanUnit.MINUTES) PlanUnit.GB else currentUnit
+        }
+        _uiState.value = _uiState.value.copy(type = type, unit = newUnit)
+    }
+
+    fun updateStartAt(startAt: LocalDateTime) {
+        _uiState.value = _uiState.value.copy(startAt = startAt)
+    }
+
+    fun updateEndAt(endAt: LocalDateTime) {
+        _uiState.value = _uiState.value.copy(endAt = endAt)
+    }
 
     fun updateInitialAmount(amount: String) {
         _uiState.value = _uiState.value.copy(initialAmount = amount)
@@ -28,20 +76,29 @@ class AddEditPlanViewModel(
         _uiState.value = _uiState.value.copy(unit = unit)
     }
 
+    private fun validate(): Boolean {
+        val state = _uiState.value
+        val amount = state.initialAmount.toDoubleOrNull()
+
+        if (amount == null || amount <= 0) return false
+        if (state.endAt.isBefore(state.startAt)) return false
+
+        return true
+    }
+
     fun savePlan(onSuccess: () -> Unit) {
-        val amount = _uiState.value.initialAmount.toDoubleOrNull() ?: return
-        val now = LocalDateTime.now()
-        // Assuming 30 days for now as UI doesn't have start/end inputs yet
-        val start = now
-        val end = now.plusDays(30)
+        if (!validate()) return
+
+        val state = _uiState.value
+        val amount = state.initialAmount.toDoubleOrNull() ?: return
 
         val plan = Plan(
-            id = UUID.randomUUID().toString(),
-            type = PlanType.INTERNET, // Defaulting to Internet
-            startAt = start,
-            endAt = end,
+            id = state.planId ?: UUID.randomUUID().toString(),
+            type = state.type,
+            startAt = state.startAt,
+            endAt = state.endAt,
             initialAmount = amount,
-            unit = _uiState.value.unit
+            unit = state.unit
         )
 
         viewModelScope.launch {
@@ -52,6 +109,17 @@ class AddEditPlanViewModel(
 }
 
 data class AddEditPlanUiState(
+    val planId: String? = null,
+    val type: PlanType = PlanType.INTERNET,
+    val startAt: LocalDateTime = LocalDateTime.now().with(LocalTime.MIN), // Start of today
+    val endAt: LocalDateTime = LocalDateTime.now().plusDays(30).with(LocalTime.MAX), // End of 30 days
     val initialAmount: String = "",
-    val unit: PlanUnit = PlanUnit.GB
-)
+    val unit: PlanUnit = PlanUnit.GB,
+    val isLoading: Boolean = false
+) {
+    val isValid: Boolean
+        get() {
+            val amount = initialAmount.toDoubleOrNull()
+            return amount != null && amount > 0 && !endAt.isBefore(startAt)
+        }
+}

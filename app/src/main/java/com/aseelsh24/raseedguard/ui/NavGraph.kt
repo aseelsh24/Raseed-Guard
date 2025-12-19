@@ -2,8 +2,10 @@ package com.aseelsh24.raseedguard.ui
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import androidx.compose.ui.Modifier
 
 object Destinations {
@@ -30,7 +32,13 @@ fun RaseedGuardNavGraph(
                 onNavigateToInsights = { navController.navigate(Destinations.INSIGHTS) }
             )
         }
-        composable(Destinations.ADD_EDIT_PLAN) {
+        composable(
+            route = "${Destinations.ADD_EDIT_PLAN}?planId={planId}",
+            arguments = listOf(navArgument("planId") {
+                type = NavType.StringType
+                nullable = true
+            })
+        ) {
             AddEditPlanScreen(
                 onNavigateBack = { navController.popBackStack() }
             )
