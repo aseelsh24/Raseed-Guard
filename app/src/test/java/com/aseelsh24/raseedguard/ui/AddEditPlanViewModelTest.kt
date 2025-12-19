@@ -4,12 +4,8 @@ import androidx.lifecycle.SavedStateHandle
 import com.aseelsh24.raseedguard.core.Plan
 import com.aseelsh24.raseedguard.core.PlanType
 import com.aseelsh24.raseedguard.core.Unit as PlanUnit
-import com.aseelsh24.raseedguard.data.repository.PlanRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -22,7 +18,6 @@ import org.junit.Before
 import org.junit.Test
 import java.time.LocalDateTime
 import java.time.LocalTime
-import java.util.UUID
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class AddEditPlanViewModelTest {
@@ -118,26 +113,5 @@ class AddEditPlanViewModelTest {
         assertEquals(1, repository.plans.size)
         assertEquals(600.0, repository.plans.first().initialAmount, 0.01)
         assertEquals("test-id", repository.plans.first().id)
-    }
-}
-
-class FakePlanRepository : PlanRepository {
-    val plans = mutableListOf<Plan>()
-
-    override fun getAllPlans(): Flow<List<Plan>> {
-        return flowOf(plans)
-    }
-
-    override fun getPlan(id: String): Flow<Plan?> {
-        return flowOf(plans.find { it.id == id })
-    }
-
-    override suspend fun insertPlan(plan: Plan) {
-        val index = plans.indexOfFirst { it.id == plan.id }
-        if (index != -1) {
-            plans[index] = plan
-        } else {
-            plans.add(plan)
-        }
     }
 }
