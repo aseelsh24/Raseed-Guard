@@ -31,24 +31,20 @@ class DashboardViewModel(
 
     private fun loadData() {
         viewModelScope.launch {
-            planRepository.getAllPlans()
-                .flatMapLatest { plans ->
-                    if (plans.isEmpty()) {
-                        flowOf(DashboardUiState.Empty)
-                    } else {
-                        // Pick the best plan to show (e.g. latest end date)
-                        val activePlan = plans.sortedByDescending { it.endAt }.first()
+            planRepository.getAllPlans().collect { plans ->
+                if (plans.isEmpty()) {
+                    _uiState.value = DashboardUiState.Empty
+                } else {
+                    // Pick the best plan to show (e.g. latest end date)
+                    val activePlan = plans.sortedByDescending { it.endAt }.first()
 
-                        // Now observe logs for this plan
-                        balanceLogRepository.getBalanceLogsForPlan(activePlan.id).map { logs ->
-                            val prediction = usagePredictor.predict(activePlan, logs, LocalDateTime.now())
-                            DashboardUiState.Success(activePlan, prediction)
-                        }
+                    // Now observe logs for this plan
+                    balanceLogRepository.getBalanceLogsForPlan(activePlan.id).collect { logs ->
+                        val prediction = usagePredictor.predict(activePlan, logs, LocalDateTime.now())
+                        _uiState.value = DashboardUiState.Success(activePlan, prediction)
                     }
                 }
-                .collect { state ->
-                    _uiState.value = state
-                }
+            }
         }
     }
 }

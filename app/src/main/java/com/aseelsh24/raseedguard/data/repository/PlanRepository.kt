@@ -9,7 +9,6 @@ import kotlinx.coroutines.flow.map
 
 interface PlanRepository {
     fun getAllPlans(): Flow<List<Plan>>
-    fun getPlan(id: String): Flow<Plan?>
     suspend fun insertPlan(plan: Plan)
 }
 
@@ -18,10 +17,6 @@ class PlanRepositoryImpl(private val planDao: PlanDao) : PlanRepository {
         return planDao.getAllPlans().map { entities ->
             entities.map { it.toDomain() }
         }
-    }
-
-    override fun getPlan(id: String): Flow<Plan?> {
-        return planDao.getPlan(id).map { it?.toDomain() }
     }
 
     override suspend fun insertPlan(plan: Plan) {
