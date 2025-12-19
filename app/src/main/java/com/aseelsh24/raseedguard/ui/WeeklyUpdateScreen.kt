@@ -48,10 +48,19 @@ fun WeeklyUpdateScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
+            if (uiState.errorMessage != null) {
+                Text(
+                    text = uiState.errorMessage!!,
+                    color = androidx.compose.ui.graphics.Color.Red,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+            }
+
             Button(
                 onClick = {
                     viewModel.saveUpdate(onSuccess = onNavigateBack)
                 },
+                enabled = uiState.canSubmit,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("تأكيد")

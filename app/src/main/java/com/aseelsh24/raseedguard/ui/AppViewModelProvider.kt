@@ -13,7 +13,8 @@ object AppViewModelProvider {
         initializer {
             DashboardViewModel(
                 planRepository = raseedGuardApplication().container.planRepository,
-                balanceLogRepository = raseedGuardApplication().container.balanceLogRepository
+                balanceLogRepository = raseedGuardApplication().container.balanceLogRepository,
+                settingsRepository = raseedGuardApplication().container.settingsRepository
             )
         }
         initializer {
@@ -25,7 +26,8 @@ object AppViewModelProvider {
         initializer {
             WeeklyUpdateViewModel(
                 planRepository = raseedGuardApplication().container.planRepository,
-                balanceLogRepository = raseedGuardApplication().container.balanceLogRepository
+                balanceLogRepository = raseedGuardApplication().container.balanceLogRepository,
+                settingsRepository = raseedGuardApplication().container.settingsRepository
             )
         }
     }

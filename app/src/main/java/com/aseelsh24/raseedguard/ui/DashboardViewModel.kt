@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.aseelsh24.raseedguard.core.*
 import com.aseelsh24.raseedguard.data.repository.BalanceLogRepository
 import com.aseelsh24.raseedguard.data.repository.PlanRepository
+import com.aseelsh24.raseedguard.data.repository.SettingsRepository
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -15,9 +17,11 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class DashboardViewModel(
     private val planRepository: PlanRepository,
-    private val balanceLogRepository: BalanceLogRepository
+    private val balanceLogRepository: BalanceLogRepository,
+    private val settingsRepository: SettingsRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<DashboardUiState>(DashboardUiState.Loading)
@@ -31,19 +35,33 @@ class DashboardViewModel(
 
     private fun loadData() {
         viewModelScope.launch {
-            planRepository.getAllPlans().collect { plans ->
+            combine(
+                planRepository.getAllPlans(),
+                settingsRepository.activePlanId
+            ) { plans, activePlanId ->
                 if (plans.isEmpty()) {
-                    _uiState.value = DashboardUiState.Empty
+                    Triple(null, null, false)
                 } else {
-                    // Pick the best plan to show (e.g. latest end date)
-                    val activePlan = plans.sortedByDescending { it.endAt }.first()
+                    val resolvedPlan = plans.find { it.id == activePlanId }
+                        ?: plans.sortedByDescending { it.endAt }.first()
 
-                    // Now observe logs for this plan
-                    balanceLogRepository.getBalanceLogsForPlan(activePlan.id).collect { logs ->
-                        val prediction = usagePredictor.predict(activePlan, logs, LocalDateTime.now())
-                        _uiState.value = DashboardUiState.Success(activePlan, prediction)
+                    val shouldPersist = activePlanId != resolvedPlan.id
+                    Triple(resolvedPlan, resolvedPlan.id, shouldPersist)
+                }
+            }.flatMapLatest { (resolvedPlan, resolvedId, shouldPersist) ->
+                if (resolvedPlan == null || resolvedId == null) {
+                    flowOf(DashboardUiState.Empty)
+                } else {
+                    if (shouldPersist) {
+                        settingsRepository.setActivePlanId(resolvedId)
+                    }
+                    balanceLogRepository.getBalanceLogsForPlan(resolvedId).map { logs ->
+                        val prediction = usagePredictor.predict(resolvedPlan, logs, LocalDateTime.now())
+                        DashboardUiState.Success(resolvedPlan, prediction)
                     }
                 }
+            }.collect { state ->
+                _uiState.value = state
             }
         }
     }

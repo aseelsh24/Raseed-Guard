@@ -7,10 +7,13 @@ import com.aseelsh24.raseedguard.data.repository.BalanceLogRepository
 import com.aseelsh24.raseedguard.data.repository.BalanceLogRepositoryImpl
 import com.aseelsh24.raseedguard.data.repository.PlanRepository
 import com.aseelsh24.raseedguard.data.repository.PlanRepositoryImpl
+import com.aseelsh24.raseedguard.data.repository.SettingsRepository
+import com.aseelsh24.raseedguard.data.repository.SettingsRepositoryImpl
 
 interface AppContainer {
     val planRepository: PlanRepository
     val balanceLogRepository: BalanceLogRepository
+    val settingsRepository: SettingsRepository
 }
 
 class AppDataContainer(private val context: Context) : AppContainer {
@@ -28,5 +31,9 @@ class AppDataContainer(private val context: Context) : AppContainer {
 
     override val balanceLogRepository: BalanceLogRepository by lazy {
         BalanceLogRepositoryImpl(database.balanceLogDao())
+    }
+
+    override val settingsRepository: SettingsRepository by lazy {
+        SettingsRepositoryImpl(context)
     }
 }
