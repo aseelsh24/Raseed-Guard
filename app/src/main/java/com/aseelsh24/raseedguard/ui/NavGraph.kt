@@ -7,6 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.compose.ui.Modifier
+import com.aseelsh24.raseedguard.ui.insights.InsightsScreen
 
 object Destinations {
     const val DASHBOARD = "dashboard"
