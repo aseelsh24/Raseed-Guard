@@ -46,6 +46,7 @@ class WeeklyUpdateViewModel(
                 onSuccess()
             } else {
                 // Handle case where no plan exists
+                // TODO: Add error handling or user feedback
             }
         }
     }
