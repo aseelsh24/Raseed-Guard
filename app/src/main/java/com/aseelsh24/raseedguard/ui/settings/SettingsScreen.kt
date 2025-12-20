@@ -17,8 +17,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.aseelsh24.raseedguard.R
 import com.aseelsh24.raseedguard.ui.AppViewModelProvider
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -32,7 +34,7 @@ fun SettingsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Settings") }
+                title = { Text(stringResource(R.string.title_settings)) }
             )
         }
     ) { innerPadding ->
@@ -42,12 +44,12 @@ fun SettingsScreen(
                 .padding(16.dp)
         ) {
             SettingItem(
-                title = "Usage alerts",
+                title = stringResource(R.string.setting_usage_alerts),
                 checked = alertsEnabled,
                 onCheckedChange = { viewModel.setAlertsEnabled(it) }
             )
             SettingItem(
-                title = "Weekly reminder",
+                title = stringResource(R.string.setting_weekly_reminder),
                 checked = weeklyReminderEnabled,
                 onCheckedChange = { viewModel.setWeeklyReminderEnabled(it) }
             )

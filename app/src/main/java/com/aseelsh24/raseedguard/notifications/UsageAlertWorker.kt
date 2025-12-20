@@ -52,20 +52,26 @@ class UsageAlertWorker(
         val decision = AlertPolicy.decideAlert(prediction)
 
         if (decision.shouldNotify) {
-            sendNotification(decision.title, decision.message)
+            sendNotification(decision)
         }
 
         return Result.success()
     }
 
-    private fun sendNotification(title: String, message: String) {
-        val notificationManager = applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    private fun sendNotification(decision: AlertDecision) {
+        val context = applicationContext
+        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-        // Use R.drawable.ic_launcher_foreground if available, otherwise android.R.drawable.ic_dialog_alert
-        // Assuming there is an app icon.
-        // I will use android.R.drawable.ic_dialog_alert as a safe default for icon
+        val titleBase = context.getString(R.string.notification_title_balance_alert)
+        val riskText = when (decision.riskLevel) {
+            com.aseelsh24.raseedguard.core.RiskLevel.CRITICAL -> context.getString(R.string.risk_level_critical_suffix)
+            com.aseelsh24.raseedguard.core.RiskLevel.WARNING -> context.getString(R.string.risk_level_warning)
+            else -> ""
+        }
+        val title = if (riskText.isNotEmpty()) "$titleBase: $riskText" else titleBase
+        val message = context.getString(R.string.notification_message_balance_alert)
 
-        val notification = NotificationCompat.Builder(applicationContext, NotificationChannels.CHANNEL_USAGE_ALERTS)
+        val notification = NotificationCompat.Builder(context, NotificationChannels.CHANNEL_USAGE_ALERTS)
             .setSmallIcon(android.R.drawable.stat_sys_warning)
             .setContentTitle(title)
             .setContentText(message)

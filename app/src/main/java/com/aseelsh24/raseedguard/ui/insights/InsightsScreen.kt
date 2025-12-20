@@ -27,8 +27,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.aseelsh24.raseedguard.R
 import com.aseelsh24.raseedguard.core.BalanceLog
 import com.aseelsh24.raseedguard.core.PredictionResult
 import com.aseelsh24.raseedguard.core.Unit as PlanUnit
@@ -47,7 +49,7 @@ fun InsightsScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text("Usage Insights") })
+            TopAppBar(title = { Text(stringResource(R.string.title_usage_insights)) })
         }
     ) { innerPadding ->
         Column(
@@ -60,13 +62,13 @@ fun InsightsScreen(
         ) {
             when (val state = uiState) {
                 is InsightsUiState.Loading -> {
-                    Text("Loading...")
+                    Text(stringResource(R.string.loading))
                 }
                 is InsightsUiState.NoActivePlan -> {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text("No active plan selected.")
-                            Text("Add a plan first.", style = MaterialTheme.typography.bodySmall)
+                            Text(stringResource(R.string.insights_no_active_plan))
+                            Text(stringResource(R.string.insights_add_plan_hint), style = MaterialTheme.typography.bodySmall)
                         }
                     }
                 }
@@ -80,19 +82,19 @@ fun InsightsScreen(
                         horizontalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         MetricCard(
-                            title = "Average Daily Usage",
+                            title = stringResource(R.string.label_average_daily_usage),
                             value = formatRateWithUnit(prediction?.smoothedDailyRate, unit),
                             modifier = Modifier.weight(1f)
                         )
                         MetricCard(
-                            title = "Safe Daily Limit",
+                            title = stringResource(R.string.label_safe_daily_limit),
                             value = formatRateWithUnit(prediction?.safeDailyUsageTarget, unit),
                             modifier = Modifier.weight(1f)
                         )
                     }
 
                     MetricCard(
-                        title = "Predicted Depletion Date",
+                        title = stringResource(R.string.label_predicted_depletion_date_short),
                         value = formatDate(prediction?.predictedDepletionAt),
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -104,7 +106,7 @@ fun InsightsScreen(
                     ) {
                         Column(modifier = Modifier.padding(16.dp)) {
                             Text(
-                                text = "Balance Trend",
+                                text = stringResource(R.string.title_balance_trend),
                                 style = MaterialTheme.typography.titleMedium,
                                 modifier = Modifier.padding(bottom = 16.dp)
                             )
@@ -128,7 +130,7 @@ fun InsightsScreen(
                         ) {
                             Column(modifier = Modifier.padding(16.dp)) {
                                 Text(
-                                    text = "Warning: Your usage rate is above the safe daily limit. Consider reducing usage.",
+                                    text = stringResource(R.string.warning_usage_rate_high),
                                     style = MaterialTheme.typography.bodyMedium
                                 )
                             }
@@ -145,7 +147,7 @@ fun SimpleTrendChart(logs: List<BalanceLog>, modifier: Modifier = Modifier) {
     if (logs.size < 2) {
         Box(modifier = modifier, contentAlignment = Alignment.Center) {
             Text(
-                text = "Not enough logs to show trend.",
+                text = stringResource(R.string.chart_not_enough_data),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -205,12 +207,13 @@ fun formatDate(date: java.time.LocalDateTime?): String {
     }
 }
 
+@Composable
 fun formatRateWithUnit(rate: Double?, unit: PlanUnit): String {
     if (rate == null) return "—"
     val unitString = when (unit) {
-        PlanUnit.MB -> "MB"
-        PlanUnit.GB -> "GB"
-        PlanUnit.MINUTES -> "Min"
+        PlanUnit.MB -> stringResource(R.string.unit_mb)
+        PlanUnit.GB -> stringResource(R.string.unit_gb)
+        PlanUnit.MINUTES -> stringResource(R.string.unit_min)
     }
-    return "%.1f %s/day".format(rate, unitString)
+    return stringResource(R.string.format_rate_per_day, rate, unitString)
 }

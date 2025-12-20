@@ -37,12 +37,13 @@ class WeeklyReminderWorker(
     }
 
     private fun sendNotification() {
-        val notificationManager = applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val context = applicationContext
+        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-        val title = "تذكير أسبوعي" // Weekly Reminder
-        val message = "لا تنس تسجيل رصيدك الحالي لمتابعة استهلاكك بدقة." // Don't forget to log your current balance to track usage accurately.
+        val title = context.getString(com.aseelsh24.raseedguard.R.string.notification_title_weekly_reminder)
+        val message = context.getString(com.aseelsh24.raseedguard.R.string.notification_message_weekly_reminder)
 
-        val notification = NotificationCompat.Builder(applicationContext, NotificationChannels.CHANNEL_REMINDERS)
+        val notification = NotificationCompat.Builder(context, NotificationChannels.CHANNEL_REMINDERS)
             .setSmallIcon(android.R.drawable.ic_menu_edit)
             .setContentTitle(title)
             .setContentText(message)

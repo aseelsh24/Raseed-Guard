@@ -34,9 +34,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.aseelsh24.raseedguard.R
 import com.aseelsh24.raseedguard.core.PlanType
 import com.aseelsh24.raseedguard.core.Unit as PlanUnit
 import java.time.Instant
@@ -59,7 +61,9 @@ fun AddEditPlanScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text(if (uiState.planId != null) "تعديل الباقة" else "إضافة باقة") })
+            TopAppBar(title = {
+                Text(if (uiState.planId != null) stringResource(R.string.title_edit_plan) else stringResource(R.string.title_add_plan))
+            })
         }
     ) { innerPadding ->
         Column(modifier = Modifier
@@ -67,14 +71,14 @@ fun AddEditPlanScreen(
             .padding(16.dp)) {
 
             // Plan Type Selector
-            Text("نوع الباقة")
+            Text(stringResource(R.string.label_plan_type))
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     RadioButton(
                         selected = uiState.type == PlanType.INTERNET,
                         onClick = { viewModel.updateType(PlanType.INTERNET) }
                     )
-                    Text("إنترنت")
+                    Text(stringResource(R.string.label_plan_type_internet))
                 }
                 Spacer(modifier = Modifier.padding(8.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -82,7 +86,7 @@ fun AddEditPlanScreen(
                         selected = uiState.type == PlanType.VOICE,
                         onClick = { viewModel.updateType(PlanType.VOICE) }
                     )
-                    Text("مكالمات")
+                    Text(stringResource(R.string.label_plan_type_voice))
                 }
             }
 
@@ -90,7 +94,7 @@ fun AddEditPlanScreen(
 
             // Dates
             DateInput(
-                label = "تاريخ البدء",
+                label = stringResource(R.string.label_start_date),
                 date = uiState.startAt,
                 onClick = { showStartDatePicker = true }
             )
@@ -98,7 +102,7 @@ fun AddEditPlanScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             DateInput(
-                label = "تاريخ الانتهاء",
+                label = stringResource(R.string.label_end_date),
                 date = uiState.endAt,
                 onClick = { showEndDatePicker = true }
             )
@@ -110,7 +114,7 @@ fun AddEditPlanScreen(
                 OutlinedTextField(
                     value = uiState.initialAmount,
                     onValueChange = { viewModel.updateInitialAmount(it) },
-                    label = { Text("سعة الباقة") },
+                    label = { Text(stringResource(R.string.label_initial_amount)) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     modifier = Modifier.weight(1f)
                 )
@@ -125,7 +129,7 @@ fun AddEditPlanScreen(
             }
 
             if (uiState.endAt.isBefore(uiState.startAt)) {
-                Text("تاريخ الانتهاء يجب أن يكون بعد تاريخ البدء", color = androidx.compose.ui.graphics.Color.Red)
+                Text(stringResource(R.string.error_end_date_before_start_date), color = androidx.compose.ui.graphics.Color.Red)
             }
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -137,7 +141,7 @@ fun AddEditPlanScreen(
                 enabled = uiState.isValid,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("حفظ")
+                Text(stringResource(R.string.action_save))
             }
         }
     }
@@ -155,10 +159,10 @@ fun AddEditPlanScreen(
                         viewModel.updateStartAt(date)
                     }
                     showStartDatePicker = false
-                }) { Text("موافق") }
+                }) { Text(stringResource(R.string.action_confirm)) }
             },
             dismissButton = {
-                TextButton(onClick = { showStartDatePicker = false }) { Text("إلغاء") }
+                TextButton(onClick = { showStartDatePicker = false }) { Text(stringResource(R.string.action_cancel)) }
             }
         ) {
             DatePicker(state = datePickerState)
@@ -178,10 +182,10 @@ fun AddEditPlanScreen(
                          viewModel.updateEndAt(date)
                     }
                     showEndDatePicker = false
-                }) { Text("موافق") }
+                }) { Text(stringResource(R.string.action_confirm)) }
             },
             dismissButton = {
-                TextButton(onClick = { showEndDatePicker = false }) { Text("إلغاء") }
+                TextButton(onClick = { showEndDatePicker = false }) { Text(stringResource(R.string.action_cancel)) }
             }
         ) {
             DatePicker(state = datePickerState)
@@ -204,7 +208,7 @@ fun DateInput(
             label = { Text(label) },
             readOnly = true,
             trailingIcon = {
-                Icon(Icons.Default.DateRange, contentDescription = "اختر تاريخ")
+                Icon(Icons.Default.DateRange, contentDescription = stringResource(R.string.content_description_pick_date))
             },
             modifier = Modifier.fillMaxWidth()
         )
@@ -232,7 +236,7 @@ fun UnitSelector(
                  .padding(top = 8.dp),
              contentAlignment = Alignment.Center
          ) {
-             Text("دقيقة")
+             Text(stringResource(R.string.unit_minutes_text))
          }
          return
     }
@@ -240,7 +244,7 @@ fun UnitSelector(
     // Dropdown for Internet
     Box {
         OutlinedTextField(
-            value = selectedUnit.name,
+            value = if (selectedUnit == PlanUnit.GB) stringResource(R.string.unit_gb) else stringResource(R.string.unit_mb),
             onValueChange = {},
             readOnly = true,
             trailingIcon = {
@@ -256,14 +260,14 @@ fun UnitSelector(
             onDismissRequest = { expanded = false }
         ) {
             DropdownMenuItem(
-                text = { Text("GB") },
+                text = { Text(stringResource(R.string.unit_gb)) },
                 onClick = {
                     onUnitSelected(PlanUnit.GB)
                     expanded = false
                 }
             )
             DropdownMenuItem(
-                text = { Text("MB") },
+                text = { Text(stringResource(R.string.unit_mb)) },
                 onClick = {
                     onUnitSelected(PlanUnit.MB)
                     expanded = false
