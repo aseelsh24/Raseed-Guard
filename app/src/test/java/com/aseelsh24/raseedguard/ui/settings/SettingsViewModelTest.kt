@@ -5,14 +5,12 @@ import com.aseelsh24.raseedguard.data.repository.SettingsRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
-import org.mockito.Mockito
 
 class FakeSettingsRepository : SettingsRepository {
     private val _alertsEnabled = MutableStateFlow(true)
@@ -36,14 +34,20 @@ class FakeSettingsRepository : SettingsRepository {
     }
 }
 
+// A simple subclass to instantiate Application for testing purposes.
+// This relies on the environment allowing instantiation of Android classes.
+// If this fails with "Method not mocked", we might need another approach,
+// but without Mockito/Robolectric, options are limited.
+class TestApplication : Application()
+
 class SettingsViewModelTest {
 
     @Test
     fun `alertsEnabled reflects repository state`() = runTest {
         // Arrange
         val fakeRepository = FakeSettingsRepository()
-        val mockApplication = Mockito.mock(Application::class.java)
-        val viewModel = SettingsViewModel(fakeRepository, mockApplication)
+        val testApplication = TestApplication()
+        val viewModel = SettingsViewModel(fakeRepository, testApplication)
 
         // Create a background collector to keep the WhileSubscribed flow active
         val collectJob = backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
@@ -66,8 +70,8 @@ class SettingsViewModelTest {
     fun `weeklyReminderEnabled reflects repository state`() = runTest {
         // Arrange
         val fakeRepository = FakeSettingsRepository()
-        val mockApplication = Mockito.mock(Application::class.java)
-        val viewModel = SettingsViewModel(fakeRepository, mockApplication)
+        val testApplication = TestApplication()
+        val viewModel = SettingsViewModel(fakeRepository, testApplication)
 
         // Create a background collector to keep the WhileSubscribed flow active
         val collectJob = backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {

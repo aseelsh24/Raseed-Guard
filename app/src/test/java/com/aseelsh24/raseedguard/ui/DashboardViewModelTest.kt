@@ -130,8 +130,13 @@ class FakeBalanceLogRepository : BalanceLogRepository {
 class FakeSettingsRepository : com.aseelsh24.raseedguard.data.repository.SettingsRepository {
     private val _activePlanId = MutableStateFlow<String?>(null)
     override val activePlanId: Flow<String?> = _activePlanId
+    override val alertsEnabled: Flow<Boolean> = MutableStateFlow(true)
+    override val weeklyReminderEnabled: Flow<Boolean> = MutableStateFlow(true)
 
     override suspend fun setActivePlanId(id: String?) {
         _activePlanId.value = id
     }
+
+    override suspend fun setAlertsEnabled(enabled: Boolean) {}
+    override suspend fun setWeeklyReminderEnabled(enabled: Boolean) {}
 }
