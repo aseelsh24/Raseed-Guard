@@ -16,9 +16,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.aseelsh24.raseedguard.R
 import com.aseelsh24.raseedguard.core.Plan
 import com.aseelsh24.raseedguard.core.PlanType
 import com.aseelsh24.raseedguard.core.PredictionResult
@@ -41,14 +43,14 @@ fun DashboardScreen(
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text("Raseed Guard") },
+                title = { Text(stringResource(R.string.app_name)) },
                 actions = {
                     IconButton(onClick = onNavigateToInsights) {
                         // Replaced BarChart with DateRange (Core)
-                        Icon(Icons.Default.DateRange, contentDescription = "Insights")
+                        Icon(Icons.Default.DateRange, contentDescription = stringResource(R.string.action_insights))
                     }
                     IconButton(onClick = onNavigateToSettings) {
-                        Icon(Icons.Default.Settings, contentDescription = "Settings")
+                        Icon(Icons.Default.Settings, contentDescription = stringResource(R.string.action_settings))
                     }
                 }
             )
@@ -57,7 +59,7 @@ fun DashboardScreen(
             FloatingActionButton(
                 onClick = onNavigateToAddPlan,
             ) {
-                Icon(Icons.Default.Add, contentDescription = "Add Plan")
+                Icon(Icons.Default.Add, contentDescription = stringResource(R.string.action_add_plan))
             }
         }
     ) { innerPadding ->
@@ -73,7 +75,7 @@ fun DashboardScreen(
                 }
                 is DashboardUiState.Empty -> {
                     Text(
-                        text = "No active plan. Add one!",
+                        text = stringResource(R.string.dashboard_no_active_plan),
                         modifier = Modifier.align(Alignment.Center),
                         style = MaterialTheme.typography.bodyLarge
                     )
@@ -155,7 +157,7 @@ fun DashboardPlanCard(
                         color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
-                        text = "Remaining Balance",
+                        text = stringResource(R.string.label_remaining_balance),
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -164,13 +166,13 @@ fun DashboardPlanCard(
                 // Right column: Days Until Expiry
                 Column(horizontalAlignment = Alignment.End) {
                     Text(
-                        text = "${prediction.daysUntilEnd} days",
+                        text = "${prediction.daysUntilEnd}",
                         style = MaterialTheme.typography.headlineMedium,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
-                        text = "Days Until Expiry",
+                        text = stringResource(R.string.label_days_until_expiry),
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -186,7 +188,7 @@ fun DashboardPlanCard(
             } ?: "—"
 
             Text(
-                text = "Predicted Depletion Date: $dateText",
+                text = stringResource(R.string.label_predicted_depletion_date, dateText),
                 style = MaterialTheme.typography.bodyMedium
             )
 
@@ -200,7 +202,7 @@ fun DashboardPlanCard(
                     onClick = onUpdateUsage,
                     modifier = Modifier.weight(1f)
                 ) {
-                    Text("Update Usage")
+                    Text(stringResource(R.string.action_update_usage))
                 }
 
                 // "Edit Plan"
@@ -208,7 +210,7 @@ fun DashboardPlanCard(
                     onClick = onEditPlan,
                     modifier = Modifier.weight(1f)
                 ) {
-                    Text("Edit Plan")
+                    Text(stringResource(R.string.action_edit_plan))
                 }
             }
         }
@@ -221,17 +223,17 @@ fun RiskBadge(riskLevel: RiskLevel) {
         RiskLevel.SAFE -> Triple(
             MaterialTheme.colorScheme.tertiaryContainer,
             MaterialTheme.colorScheme.onTertiaryContainer,
-            "Safe"
+            stringResource(R.string.risk_level_safe)
         )
         RiskLevel.WARNING -> Triple(
             MaterialTheme.colorScheme.secondaryContainer,
             MaterialTheme.colorScheme.onSecondaryContainer,
-            "Warning"
+            stringResource(R.string.risk_level_warning)
         )
         RiskLevel.CRITICAL -> Triple(
             MaterialTheme.colorScheme.errorContainer,
             MaterialTheme.colorScheme.onErrorContainer,
-            "Critical"
+            stringResource(R.string.risk_level_critical)
         )
     }
 
@@ -258,19 +260,21 @@ private fun getPlanIcon(type: PlanType): ImageVector {
     }
 }
 
+@Composable
 private fun getPlanLabel(type: PlanType): String {
     return when (type) {
-        PlanType.INTERNET -> "Internet Plan"
-        PlanType.VOICE -> "Voice Plan"
-        PlanType.MIXED -> "Mixed Plan"
+        PlanType.INTERNET -> stringResource(R.string.plan_type_internet)
+        PlanType.VOICE -> stringResource(R.string.plan_type_voice)
+        PlanType.MIXED -> stringResource(R.string.plan_type_mixed)
     }
 }
 
+@Composable
 private fun formatBalance(amount: Double, unit: PlanUnit): String {
     val unitStr = when (unit) {
-        PlanUnit.MB -> "MB"
-        PlanUnit.GB -> "GB"
-        PlanUnit.MINUTES -> "min"
+        PlanUnit.MB -> stringResource(R.string.unit_mb)
+        PlanUnit.GB -> stringResource(R.string.unit_gb)
+        PlanUnit.MINUTES -> stringResource(R.string.unit_min)
     }
     return "%.1f %s".format(amount, unitStr)
 }

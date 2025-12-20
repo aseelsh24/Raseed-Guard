@@ -1,0 +1,75 @@
+<resources>
+    <string name="app_name">Raseed Guard</string>
+
+    <!-- Dashboard -->
+    <string name="action_insights">تحليلات</string>
+    <string name="action_settings">الإعدادات</string>
+    <string name="action_add_plan">إضافة باقة</string>
+    <string name="dashboard_no_active_plan">لا توجد باقة مفعلة. أضف واحدة!</string>
+    <string name="plan_type_internet">باقة إنترنت</string>
+    <string name="plan_type_voice">باقة مكالمات</string>
+    <string name="plan_type_mixed">باقة مختلطة</string>
+    <string name="risk_level_safe">آمن</string>
+    <string name="risk_level_warning">تحذير</string>
+    <string name="risk_level_critical">حرج</string>
+    <string name="label_remaining_balance">الرصيد المتبقي</string>
+    <string name="label_days_until_expiry">أيام حتى الانتهاء</string>
+    <string name="label_predicted_depletion_date">تاريخ النفاذ المتوقع: %1$s</string>
+    <string name="action_update_usage">تحديث الاستهلاك</string>
+    <string name="action_edit_plan">تعديل الباقة</string>
+    <string name="unit_mb">ميجا</string>
+    <string name="unit_gb">جيجا</string>
+    <string name="unit_min">دقيقة</string>
+
+    <!-- Add/Edit Plan -->
+    <string name="title_add_plan">إضافة باقة</string>
+    <string name="title_edit_plan">تعديل الباقة</string>
+    <string name="label_plan_type">نوع الباقة</string>
+    <string name="label_plan_type_internet">إنترنت</string>
+    <string name="label_plan_type_voice">مكالمات</string>
+    <string name="label_start_date">تاريخ البدء</string>
+    <string name="label_end_date">تاريخ الانتهاء</string>
+    <string name="label_initial_amount">سعة الباقة</string>
+    <string name="error_end_date_before_start_date">تاريخ الانتهاء يجب أن يكون بعد تاريخ البدء</string>
+    <string name="action_save">حفظ</string>
+    <string name="action_confirm">موافق</string>
+    <string name="action_cancel">إلغاء</string>
+    <string name="content_description_pick_date">اختر تاريخ</string>
+    <string name="unit_minutes_text">دقيقة</string>
+
+    <!-- Weekly Update -->
+    <string name="title_weekly_update">تحديث أسبوعي</string>
+    <string name="prompt_enter_remaining_balance">أدخل الرصيد المتبقي</string>
+    <string name="label_remaining_balance_input">الرصيد المتبقي</string>
+
+    <!-- Insights -->
+    <string name="title_usage_insights">تحليلات الاستهلاك</string>
+    <string name="loading">جاري التحميل...</string>
+    <string name="insights_no_active_plan">لم يتم تحديد باقة نشطة.</string>
+    <string name="insights_add_plan_hint">أضف باقة أولاً.</string>
+    <string name="label_average_daily_usage">متوسط الاستهلاك اليومي</string>
+    <string name="label_safe_daily_limit">الحد اليومي الآمن</string>
+    <string name="label_predicted_depletion_date_short">تاريخ النفاذ المتوقع</string>
+    <string name="title_balance_trend">اتجاه الرصيد</string>
+    <string name="chart_not_enough_data">لا توجد بيانات كافية لإظهار الاتجاه.</string>
+    <string name="warning_usage_rate_high">تحذير: معدل استهلاكك أعلى من الحد اليومي الآمن. فكر في تقليل الاستهلاك.</string>
+    <string name="format_rate_per_day">%.1f %s/يوم</string>
+
+    <!-- Settings -->
+    <string name="title_settings">الإعدادات</string>
+    <string name="setting_usage_alerts">تنبيهات الاستهلاك</string>
+    <string name="setting_weekly_reminder">تذكير أسبوعي</string>
+
+    <!-- Notifications -->
+    <string name="notification_title_balance_alert">تنبيه الرصيد</string>
+    <string name="notification_message_balance_alert">انتبه! استهلاكك الحالي قد يؤدي لنفاذ الرصيد قبل الموعد.</string>
+    <string name="notification_title_weekly_reminder">تذكير أسبوعي</string>
+    <string name="notification_message_weekly_reminder">لا تنس تسجيل رصيدك الحالي لمتابعة استهلاكك بدقة.</string>
+
+    <string name="channel_name_usage_alerts">تنبيهات الاستهلاك</string>
+    <string name="channel_desc_usage_alerts">تنبيهات عند اقتراب نفاذ الرصيد</string>
+    <string name="channel_name_reminders">تذكيرات</string>
+    <string name="channel_desc_reminders">تذكير أسبوعي لتسجيل الرصيد</string>
+
+    <string name="risk_level_critical_suffix">مستوى حرج</string>
+</resources>

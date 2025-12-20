@@ -16,9 +16,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.aseelsh24.raseedguard.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -30,18 +32,18 @@ fun WeeklyUpdateScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text("تحديث أسبوعي") })
+            TopAppBar(title = { Text(stringResource(R.string.title_weekly_update)) })
         }
     ) { innerPadding ->
         Column(modifier = Modifier.padding(innerPadding).padding(16.dp)) {
-            Text("أدخل الرصيد المتبقي")
+            Text(stringResource(R.string.prompt_enter_remaining_balance))
 
             Spacer(modifier = Modifier.height(16.dp))
 
             OutlinedTextField(
                 value = uiState.remainingAmount,
                 onValueChange = { viewModel.updateRemainingAmount(it) },
-                label = { Text("الرصيد المتبقي") },
+                label = { Text(stringResource(R.string.label_remaining_balance_input)) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier.fillMaxWidth()
             )
@@ -63,7 +65,7 @@ fun WeeklyUpdateScreen(
                 enabled = uiState.canSubmit,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("تأكيد")
+                Text(stringResource(R.string.action_confirm))
             }
         }
     }
