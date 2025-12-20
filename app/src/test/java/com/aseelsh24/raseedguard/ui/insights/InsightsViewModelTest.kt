@@ -2,6 +2,7 @@ package com.aseelsh24.raseedguard.ui.insights
 
 import com.aseelsh24.raseedguard.core.BalanceLog
 import com.aseelsh24.raseedguard.core.Plan
+import com.aseelsh24.raseedguard.core.PlanType
 import com.aseelsh24.raseedguard.core.Unit as PlanUnit
 import com.aseelsh24.raseedguard.data.repository.BalanceLogRepository
 import com.aseelsh24.raseedguard.data.repository.PlanRepository
@@ -61,7 +62,7 @@ class InsightsViewModelTest {
     fun `uiState is Success when active plan and logs exist`() = runTest {
         val plan = Plan(
             id = "plan1",
-            type = "Prepaid",
+            type = PlanType.INTERNET,
             startAt = LocalDateTime.now().minusDays(10),
             endAt = LocalDateTime.now().plusDays(20),
             initialAmount = 100.0,
@@ -71,8 +72,8 @@ class InsightsViewModelTest {
         fakeSettingsRepository.emitActivePlanId("plan1")
 
         val logs = listOf(
-            BalanceLog("log1", "plan1", 90.0, LocalDateTime.now().minusDays(9)),
-            BalanceLog("log2", "plan1", 80.0, LocalDateTime.now().minusDays(8))
+            BalanceLog(planId = "plan1", loggedAt = LocalDateTime.now().minusDays(9), remainingAmount = 90.0),
+            BalanceLog(planId = "plan1", loggedAt = LocalDateTime.now().minusDays(8), remainingAmount = 80.0)
         )
         fakeBalanceLogRepository.setLogs(logs)
 
@@ -98,7 +99,7 @@ class FakeSettingsRepository : SettingsRepository {
         _activePlanId.value = id
     }
 
-    override suspend fun setActivePlanId(id: String) {
+    override suspend fun setActivePlanId(id: String?) {
         _activePlanId.value = id
     }
 }
