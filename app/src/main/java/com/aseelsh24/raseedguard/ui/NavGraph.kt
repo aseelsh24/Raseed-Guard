@@ -31,6 +31,9 @@ fun RaseedGuardNavGraph(
         composable(Destinations.DASHBOARD) {
             DashboardScreen(
                 onNavigateToAddPlan = { navController.navigate(Destinations.ADD_EDIT_PLAN) },
+                onNavigateToEditPlan = { planId ->
+                    navController.navigate("${Destinations.ADD_EDIT_PLAN}?planId=$planId")
+                },
                 onNavigateToUpdate = { navController.navigate(Destinations.WEEKLY_UPDATE) },
                 onNavigateToInsights = { navController.navigate(Destinations.INSIGHTS) },
                 onNavigateToSettings = { navController.navigate(Destinations.SETTINGS) }
