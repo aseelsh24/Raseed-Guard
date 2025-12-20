@@ -24,6 +24,12 @@ class UsageAlertWorker(
         val planRepository = container.planRepository
         val balanceLogRepository = container.balanceLogRepository
 
+        // Check if alerts are enabled
+        val alertsEnabled = settingsRepository.alertsEnabled.first()
+        if (!alertsEnabled) {
+            return Result.success()
+        }
+
         // 1. Read activePlanId
         val activePlanId = settingsRepository.activePlanId.firstOrNull()
         if (activePlanId == null) {

@@ -6,6 +6,7 @@ import androidx.core.app.NotificationCompat
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.aseelsh24.raseedguard.RaseedGuardApplication
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 
 class WeeklyReminderWorker(
@@ -16,6 +17,12 @@ class WeeklyReminderWorker(
     override suspend fun doWork(): Result {
         val application = applicationContext as RaseedGuardApplication
         val settingsRepository = application.container.settingsRepository
+
+        // Check if reminders are enabled
+        val weeklyReminderEnabled = settingsRepository.weeklyReminderEnabled.first()
+        if (!weeklyReminderEnabled) {
+            return Result.success()
+        }
 
         // Check activePlanId exists (optional but good practice)
         val activePlanId = settingsRepository.activePlanId.firstOrNull()
