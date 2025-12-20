@@ -2,14 +2,22 @@ package com.aseelsh24.raseedguard.ui.settings
 
 import android.app.Application
 import com.aseelsh24.raseedguard.data.repository.SettingsRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
+import org.junit.After
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
+import org.junit.Before
 import org.junit.Test
 
 class FakeSettingsRepository : SettingsRepository {
@@ -35,12 +43,20 @@ class FakeSettingsRepository : SettingsRepository {
 }
 
 // A simple subclass to instantiate Application for testing purposes.
-// This relies on the environment allowing instantiation of Android classes.
-// If this fails with "Method not mocked", we might need another approach,
-// but without Mockito/Robolectric, options are limited.
 class TestApplication : Application()
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class SettingsViewModelTest {
+
+    @Before
+    fun setup() {
+        Dispatchers.setMain(StandardTestDispatcher())
+    }
+
+    @After
+    fun tearDown() {
+        Dispatchers.resetMain()
+    }
 
     @Test
     fun `alertsEnabled reflects repository state`() = runTest {
@@ -54,14 +70,20 @@ class SettingsViewModelTest {
             viewModel.alertsEnabled.collect {}
         }
 
+        // Wait for initial value to propagate (though initialValue is immediate, connection might take a tick)
+        advanceUntilIdle()
+
         // Assert Initial
-        assertTrue(viewModel.alertsEnabled.value)
+        assertTrue("Initial value should be true", viewModel.alertsEnabled.value)
 
         // Act
         fakeRepository.setAlertsEnabled(false)
 
+        // Wait for flow emission to be processed
+        advanceUntilIdle()
+
         // Assert Update
-        assertFalse(viewModel.alertsEnabled.value)
+        assertFalse("Value should be false after repository update", viewModel.alertsEnabled.value)
 
         collectJob.cancel()
     }
@@ -78,14 +100,18 @@ class SettingsViewModelTest {
             viewModel.weeklyReminderEnabled.collect {}
         }
 
+        advanceUntilIdle()
+
         // Assert Initial
-        assertTrue(viewModel.weeklyReminderEnabled.value)
+        assertTrue("Initial value should be true", viewModel.weeklyReminderEnabled.value)
 
         // Act
         fakeRepository.setWeeklyReminderEnabled(false)
 
+        advanceUntilIdle()
+
         // Assert Update
-        assertFalse(viewModel.weeklyReminderEnabled.value)
+        assertFalse("Value should be false after repository update", viewModel.weeklyReminderEnabled.value)
 
         collectJob.cancel()
     }
