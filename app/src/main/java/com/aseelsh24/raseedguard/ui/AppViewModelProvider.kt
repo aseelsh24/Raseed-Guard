@@ -7,9 +7,17 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.aseelsh24.raseedguard.RaseedGuardApplication
+import com.aseelsh24.raseedguard.ui.insights.InsightsViewModel
 
 object AppViewModelProvider {
     val Factory = viewModelFactory {
+        initializer {
+            InsightsViewModel(
+                planRepository = raseedGuardApplication().container.planRepository,
+                balanceLogRepository = raseedGuardApplication().container.balanceLogRepository,
+                settingsRepository = raseedGuardApplication().container.settingsRepository
+            )
+        }
         initializer {
             DashboardViewModel(
                 planRepository = raseedGuardApplication().container.planRepository,
