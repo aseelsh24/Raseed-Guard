@@ -1,22 +1,36 @@
 package com.aseelsh24.raseedguard.ui
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Call
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.aseelsh24.raseedguard.core.Plan
+import com.aseelsh24.raseedguard.core.PlanType
 import com.aseelsh24.raseedguard.core.PredictionResult
 import com.aseelsh24.raseedguard.core.RiskLevel
+import com.aseelsh24.raseedguard.core.Unit as PlanUnit
 import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DashboardScreen(
     onNavigateToAddPlan: () -> Unit,
+    onNavigateToEditPlan: (String) -> Unit,
     onNavigateToUpdate: () -> Unit,
     onNavigateToInsights: () -> Unit,
     onNavigateToSettings: () -> Unit,
@@ -26,44 +40,58 @@ fun DashboardScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text("لوحة التحكم") }) // Dashboard
+            CenterAlignedTopAppBar(
+                title = { Text("Raseed Guard") },
+                actions = {
+                    IconButton(onClick = onNavigateToInsights) {
+                        // Replaced BarChart with DateRange (Core)
+                        Icon(Icons.Default.DateRange, contentDescription = "Insights")
+                    }
+                    IconButton(onClick = onNavigateToSettings) {
+                        Icon(Icons.Default.Settings, contentDescription = "Settings")
+                    }
+                }
+            )
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = onNavigateToAddPlan,
+            ) {
+                Icon(Icons.Default.Add, contentDescription = "Add Plan")
+            }
         }
     ) { innerPadding ->
-        Column(modifier = Modifier.padding(innerPadding)) {
-
+        Box(
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize(),
+            contentAlignment = Alignment.TopCenter
+        ) {
             when (val state = uiState) {
                 is DashboardUiState.Loading -> {
-                    Text("جاري التحميل...", modifier = Modifier.padding(16.dp))
+                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                 }
                 is DashboardUiState.Empty -> {
-                    Text("لا توجد باقات حالية. قم بإضافة باقة.", modifier = Modifier.padding(16.dp))
+                    Text(
+                        text = "No active plan. Add one!",
+                        modifier = Modifier.align(Alignment.Center),
+                        style = MaterialTheme.typography.bodyLarge
+                    )
                 }
                 is DashboardUiState.Success -> {
-                    PredictionCard(state.prediction)
+                    DashboardPlanCard(
+                        plan = state.plan,
+                        prediction = state.prediction,
+                        onUpdateUsage = onNavigateToUpdate,
+                        onEditPlan = { onNavigateToEditPlan(state.plan.id) }
+                    )
                 }
                 is DashboardUiState.Error -> {
-                    Text("خطأ: ${state.message}", color = Color.Red, modifier = Modifier.padding(16.dp))
-                }
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Text(text = "إجراءات سريعة", style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(8.dp))
-
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.padding(8.dp)) {
-                Button(onClick = onNavigateToAddPlan) {
-                    Text("إضافة باقة")
-                }
-                Button(onClick = onNavigateToUpdate) {
-                    Text("تحديث")
-                }
-            }
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.padding(8.dp)) {
-                Button(onClick = onNavigateToInsights) {
-                    Text("إحصائيات تفصيلية")
-                }
-                Button(onClick = onNavigateToSettings) {
-                    Text("الإعدادات")
+                    Text(
+                        text = "Error: ${state.message}",
+                        color = MaterialTheme.colorScheme.error,
+                        modifier = Modifier.align(Alignment.Center)
+                    )
                 }
             }
         }
@@ -71,49 +99,178 @@ fun DashboardScreen(
 }
 
 @Composable
-fun PredictionCard(prediction: PredictionResult) {
+fun DashboardPlanCard(
+    plan: Plan,
+    prediction: PredictionResult,
+    onUpdateUsage: () -> Unit,
+    onEditPlan: () -> Unit
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = when (prediction.riskLevel) {
-                RiskLevel.SAFE -> Color(0xFFE8F5E9) // Light Green
-                RiskLevel.WARNING -> Color(0xFFFFF3E0) // Light Orange
-                RiskLevel.CRITICAL -> Color(0xFFFFEBEE) // Light Red
-            }
-        )
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(
-                text = "المتبقي: %.2f".format(prediction.remainingNormalized),
-                style = MaterialTheme.typography.headlineMedium
-            )
-            Text(text = "الأيام المتبقية: ${prediction.daysUntilEnd}")
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            // 2.1 Plan header row
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                // Left: icon + label
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Icon(
+                        imageVector = getPlanIcon(plan.type),
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                    Text(
+                        text = getPlanLabel(plan.type),
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
 
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(text = "الاستهلاك اليومي: %.2f".format(prediction.dailyRate))
-
-            if (prediction.predictedDepletionAt != null) {
-                val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-                Text(text = "تاريخ النفاد المتوقع: ${prediction.predictedDepletionAt.format(formatter)}")
-            } else {
-                Text(text = "تاريخ النفاد المتوقع: غير متوفر (بيانات غير كافية)")
+                // Right: Risk badge
+                RiskBadge(prediction.riskLevel)
             }
 
-            Text(
-                text = "مستوى الخطر: ${prediction.riskLevel}",
-                style = MaterialTheme.typography.titleMedium,
-                color = when (prediction.riskLevel) {
-                    RiskLevel.SAFE -> Color(0xFF2E7D32)
-                    RiskLevel.WARNING -> Color(0xFFEF6C00)
-                    RiskLevel.CRITICAL -> Color(0xFFC62828)
+            // 2.2 Metric row
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                // Left column: Remaining Balance
+                Column {
+                    Text(
+                        text = formatBalance(prediction.remainingNormalized, plan.unit),
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Text(
+                        text = "Remaining Balance",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 }
+
+                // Right column: Days Until Expiry
+                Column(horizontalAlignment = Alignment.End) {
+                    Text(
+                        text = "${prediction.daysUntilEnd} days",
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Text(
+                        text = "Days Until Expiry",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+
+            // 2.3 Predicted depletion date line
+            // Replaced HorizontalDivider with Divider (older Material3 compatibility)
+            Divider()
+
+            val dateText = prediction.predictedDepletionAt?.let {
+                it.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+            } ?: "—"
+
+            Text(
+                text = "Predicted Depletion Date: $dateText",
+                style = MaterialTheme.typography.bodyMedium
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(text = "الاستهلاك اليومي الآمن: %.2f".format(prediction.safeDailyUsageTarget))
+            // 2.4 Action buttons row
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                // "Update Usage"
+                OutlinedButton(
+                    onClick = onUpdateUsage,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("Update Usage")
+                }
+
+                // "Edit Plan"
+                FilledTonalButton(
+                    onClick = onEditPlan,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("Edit Plan")
+                }
+            }
         }
     }
+}
+
+@Composable
+fun RiskBadge(riskLevel: RiskLevel) {
+    val (containerColor, contentColor, text) = when (riskLevel) {
+        RiskLevel.SAFE -> Triple(
+            MaterialTheme.colorScheme.tertiaryContainer,
+            MaterialTheme.colorScheme.onTertiaryContainer,
+            "Safe"
+        )
+        RiskLevel.WARNING -> Triple(
+            MaterialTheme.colorScheme.secondaryContainer,
+            MaterialTheme.colorScheme.onSecondaryContainer,
+            "Warning"
+        )
+        RiskLevel.CRITICAL -> Triple(
+            MaterialTheme.colorScheme.errorContainer,
+            MaterialTheme.colorScheme.onErrorContainer,
+            "Critical"
+        )
+    }
+
+    Surface(
+        color = containerColor,
+        shape = RoundedCornerShape(16.dp)
+    ) {
+        Text(
+            text = text,
+            color = contentColor,
+            style = MaterialTheme.typography.labelSmall,
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+        )
+    }
+}
+
+private fun getPlanIcon(type: PlanType): ImageVector {
+    return when (type) {
+        // Replaced Wifi with Share (Core)
+        PlanType.INTERNET -> Icons.Default.Share
+        PlanType.VOICE -> Icons.Default.Call
+        // Replaced Layers with List (Core)
+        PlanType.MIXED -> Icons.Default.List
+    }
+}
+
+private fun getPlanLabel(type: PlanType): String {
+    return when (type) {
+        PlanType.INTERNET -> "Internet Plan"
+        PlanType.VOICE -> "Voice Plan"
+        PlanType.MIXED -> "Mixed Plan"
+    }
+}
+
+private fun formatBalance(amount: Double, unit: PlanUnit): String {
+    val unitStr = when (unit) {
+        PlanUnit.MB -> "MB"
+        PlanUnit.GB -> "GB"
+        PlanUnit.MINUTES -> "min"
+    }
+    return "%.1f %s".format(amount, unitStr)
 }
