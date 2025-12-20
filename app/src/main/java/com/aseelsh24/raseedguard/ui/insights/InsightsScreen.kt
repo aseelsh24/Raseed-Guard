@@ -208,9 +208,9 @@ fun formatDate(date: java.time.LocalDateTime?): String {
 fun formatRateWithUnit(rate: Double?, unit: PlanUnit): String {
     if (rate == null) return "—"
     val unitString = when (unit) {
-        PlanUnit.MEGABYTES -> "MB"
+        PlanUnit.MB -> "MB"
+        PlanUnit.GB -> "GB"
         PlanUnit.MINUTES -> "Min"
-        else -> ""
     }
     return "%.1f %s/day".format(rate, unitString)
 }
