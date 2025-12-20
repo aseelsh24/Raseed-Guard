@@ -10,17 +10,17 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.Button
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -57,87 +57,126 @@ fun AddEditPlanScreen(
     var showStartDatePicker by remember { mutableStateOf(false) }
     var showEndDatePicker by remember { mutableStateOf(false) }
 
+    // State for Plan Type Dropdown
+    var planTypeExpanded by remember { mutableStateOf(false) }
+
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text(if (uiState.planId != null) "تعديل الباقة" else "إضافة باقة") })
+            TopAppBar(title = { Text(if (uiState.planId != null) "Edit Plan" else "Add Plan") })
         }
     ) { innerPadding ->
-        Column(modifier = Modifier
-            .padding(innerPadding)
-            .padding(16.dp)) {
-
-            // Plan Type Selector
-            Text("نوع الباقة")
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    RadioButton(
-                        selected = uiState.type == PlanType.INTERNET,
-                        onClick = { viewModel.updateType(PlanType.INTERNET) }
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .padding(16.dp)
+        ) {
+            // 1. Plan Type dropdown
+            ExposedDropdownMenuBox(
+                expanded = planTypeExpanded,
+                onExpandedChange = { planTypeExpanded = !planTypeExpanded },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                OutlinedTextField(
+                    value = if (uiState.type == PlanType.INTERNET) "Internet Plan" else "Voice Plan",
+                    onValueChange = {},
+                    readOnly = true,
+                    label = { Text("Plan Type") },
+                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = planTypeExpanded) },
+                    colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
+                    modifier = Modifier.menuAnchor().fillMaxWidth()
+                )
+                ExposedDropdownMenu(
+                    expanded = planTypeExpanded,
+                    onDismissRequest = { planTypeExpanded = false }
+                ) {
+                    DropdownMenuItem(
+                        text = { Text("Internet Plan") },
+                        onClick = {
+                            viewModel.updateType(PlanType.INTERNET)
+                            planTypeExpanded = false
+                        }
                     )
-                    Text("إنترنت")
-                }
-                Spacer(modifier = Modifier.padding(8.dp))
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    RadioButton(
-                        selected = uiState.type == PlanType.VOICE,
-                        onClick = { viewModel.updateType(PlanType.VOICE) }
+                    DropdownMenuItem(
+                        text = { Text("Voice Plan") },
+                        onClick = {
+                            viewModel.updateType(PlanType.VOICE)
+                            planTypeExpanded = false
+                        }
                     )
-                    Text("مكالمات")
                 }
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Dates
+            // 2. Start Date field
             DateInput(
-                label = "تاريخ البدء",
+                label = "Start Date",
                 date = uiState.startAt,
                 onClick = { showStartDatePicker = true }
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
+            // 3. End Date field
             DateInput(
-                label = "تاريخ الانتهاء",
+                label = "End Date",
                 date = uiState.endAt,
                 onClick = { showEndDatePicker = true }
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Amount and Unit
+            // 4. Initial Amount + Unit
             Row(verticalAlignment = Alignment.CenterVertically) {
                 OutlinedTextField(
                     value = uiState.initialAmount,
                     onValueChange = { viewModel.updateInitialAmount(it) },
-                    label = { Text("سعة الباقة") },
+                    label = { Text("Initial Amount") },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(0.6f)
                 )
 
-                Spacer(modifier = Modifier.padding(8.dp))
+                Spacer(modifier = Modifier.padding(4.dp))
 
-                UnitSelector(
-                    selectedUnit = uiState.unit,
-                    planType = uiState.type,
-                    onUnitSelected = { viewModel.updateUnit(it) }
-                )
+                Box(modifier = Modifier.weight(0.4f)) {
+                    UnitSelector(
+                        selectedUnit = uiState.unit,
+                        planType = uiState.type,
+                        onUnitSelected = { viewModel.updateUnit(it) }
+                    )
+                }
             }
 
             if (uiState.endAt.isBefore(uiState.startAt)) {
-                Text("تاريخ الانتهاء يجب أن يكون بعد تاريخ البدء", color = androidx.compose.ui.graphics.Color.Red)
+                Text(
+                    text = "End date must be after start date",
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.padding(top = 8.dp)
+                )
             }
 
             Spacer(modifier = Modifier.height(24.dp))
 
+            // 5. Save Button
             Button(
                 onClick = {
                     viewModel.savePlan(onSuccess = onNavigateBack)
                 },
                 enabled = uiState.isValid,
+                modifier = Modifier.fillMaxWidth(),
+                shape = MaterialTheme.shapes.extraLarge
+            ) {
+                Text("Save Plan")
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // 6. Cancel Button
+            TextButton(
+                onClick = onNavigateBack,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("حفظ")
+                Text("Cancel")
             }
         }
     }
@@ -155,10 +194,10 @@ fun AddEditPlanScreen(
                         viewModel.updateStartAt(date)
                     }
                     showStartDatePicker = false
-                }) { Text("موافق") }
+                }) { Text("OK") }
             },
             dismissButton = {
-                TextButton(onClick = { showStartDatePicker = false }) { Text("إلغاء") }
+                TextButton(onClick = { showStartDatePicker = false }) { Text("Cancel") }
             }
         ) {
             DatePicker(state = datePickerState)
@@ -178,10 +217,10 @@ fun AddEditPlanScreen(
                          viewModel.updateEndAt(date)
                     }
                     showEndDatePicker = false
-                }) { Text("موافق") }
+                }) { Text("OK") }
             },
             dismissButton = {
-                TextButton(onClick = { showEndDatePicker = false }) { Text("إلغاء") }
+                TextButton(onClick = { showEndDatePicker = false }) { Text("Cancel") }
             }
         ) {
             DatePicker(state = datePickerState)
@@ -204,7 +243,7 @@ fun DateInput(
             label = { Text(label) },
             readOnly = true,
             trailingIcon = {
-                Icon(Icons.Default.DateRange, contentDescription = "اختر تاريخ")
+                Icon(Icons.Default.DateRange, contentDescription = "Select Date")
             },
             modifier = Modifier.fillMaxWidth()
         )
@@ -216,6 +255,7 @@ fun DateInput(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UnitSelector(
     selectedUnit: PlanUnit,
@@ -224,51 +264,45 @@ fun UnitSelector(
 ) {
     var expanded by remember { mutableStateOf(false) }
 
-    // If Voice, only show Minutes (or just text)
-    if (planType == PlanType.VOICE) {
-         Box(
-             modifier = Modifier
-                 .height(56.dp)
-                 .padding(top = 8.dp),
-             contentAlignment = Alignment.Center
-         ) {
-             Text("دقيقة")
-         }
-         return
-    }
-
-    // Dropdown for Internet
-    Box {
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { if (planType == PlanType.INTERNET) expanded = !expanded },
+        modifier = Modifier.fillMaxWidth()
+    ) {
         OutlinedTextField(
-            value = selectedUnit.name,
+            value = if (selectedUnit == PlanUnit.MINUTES) "Minutes" else selectedUnit.name,
             onValueChange = {},
             readOnly = true,
+            label = { Text("Unit") },
             trailingIcon = {
-                Icon(Icons.Default.ArrowDropDown, contentDescription = null)
+                 if (planType == PlanType.INTERNET) {
+                     ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+                 }
             },
-            modifier = Modifier.clickable { expanded = true }.height(64.dp).padding(top = 8.dp).fillMaxWidth(0.4f)
+            colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
+            modifier = Modifier.menuAnchor().fillMaxWidth(),
+            enabled = planType == PlanType.INTERNET
         )
-        // Fix overlap click
-        Box(modifier = Modifier.matchParentSize().clickable { expanded = true })
-
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false }
-        ) {
-            DropdownMenuItem(
-                text = { Text("GB") },
-                onClick = {
-                    onUnitSelected(PlanUnit.GB)
-                    expanded = false
-                }
-            )
-            DropdownMenuItem(
-                text = { Text("MB") },
-                onClick = {
-                    onUnitSelected(PlanUnit.MB)
-                    expanded = false
-                }
-            )
+        if (planType == PlanType.INTERNET) {
+            ExposedDropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false }
+            ) {
+                DropdownMenuItem(
+                    text = { Text("GB") },
+                    onClick = {
+                        onUnitSelected(PlanUnit.GB)
+                        expanded = false
+                    }
+                )
+                DropdownMenuItem(
+                    text = { Text("MB") },
+                    onClick = {
+                        onUnitSelected(PlanUnit.MB)
+                        expanded = false
+                    }
+                )
+            }
         }
     }
 }
