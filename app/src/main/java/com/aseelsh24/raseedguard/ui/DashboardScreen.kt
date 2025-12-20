@@ -4,11 +4,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.Call
-import androidx.compose.material.icons.filled.Layers
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Wifi
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -44,7 +44,8 @@ fun DashboardScreen(
                 title = { Text("Raseed Guard") },
                 actions = {
                     IconButton(onClick = onNavigateToInsights) {
-                        Icon(Icons.Default.BarChart, contentDescription = "Insights")
+                        // Replaced BarChart with DateRange (Core)
+                        Icon(Icons.Default.DateRange, contentDescription = "Insights")
                     }
                     IconButton(onClick = onNavigateToSettings) {
                         Icon(Icons.Default.Settings, contentDescription = "Settings")
@@ -177,7 +178,8 @@ fun DashboardPlanCard(
             }
 
             // 2.3 Predicted depletion date line
-            HorizontalDivider()
+            // Replaced HorizontalDivider with Divider (older Material3 compatibility)
+            Divider()
 
             val dateText = prediction.predictedDepletionAt?.let {
                 it.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
@@ -248,9 +250,11 @@ fun RiskBadge(riskLevel: RiskLevel) {
 
 private fun getPlanIcon(type: PlanType): ImageVector {
     return when (type) {
-        PlanType.INTERNET -> Icons.Default.Wifi
+        // Replaced Wifi with Share (Core)
+        PlanType.INTERNET -> Icons.Default.Share
         PlanType.VOICE -> Icons.Default.Call
-        PlanType.MIXED -> Icons.Default.Layers
+        // Replaced Layers with List (Core)
+        PlanType.MIXED -> Icons.Default.List
     }
 }
 
@@ -268,6 +272,5 @@ private fun formatBalance(amount: Double, unit: PlanUnit): String {
         PlanUnit.GB -> "GB"
         PlanUnit.MINUTES -> "min"
     }
-    // Format to 1 decimal place or just integer if strict matching needed? Mock says "7.0 GB"
     return "%.1f %s".format(amount, unitStr)
 }
