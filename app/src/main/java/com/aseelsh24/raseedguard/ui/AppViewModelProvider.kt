@@ -8,9 +8,16 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.aseelsh24.raseedguard.RaseedGuardApplication
 import com.aseelsh24.raseedguard.ui.insights.InsightsViewModel
+import com.aseelsh24.raseedguard.ui.settings.SettingsViewModel
 
 object AppViewModelProvider {
     val Factory = viewModelFactory {
+        initializer {
+            SettingsViewModel(
+                settingsRepository = raseedGuardApplication().container.settingsRepository,
+                application = raseedGuardApplication()
+            )
+        }
         initializer {
             InsightsViewModel(
                 planRepository = raseedGuardApplication().container.planRepository,

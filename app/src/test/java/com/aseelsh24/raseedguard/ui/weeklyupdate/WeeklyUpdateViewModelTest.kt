@@ -129,8 +129,18 @@ class FakeBalanceLogRepository : BalanceLogRepository {
 class FakeSettingsRepository : SettingsRepository {
     private val _activePlanId = MutableStateFlow<String?>(null)
     override val activePlanId: Flow<String?> = _activePlanId
+    override val alertsEnabled: Flow<Boolean> = MutableStateFlow(true)
+    override val weeklyReminderEnabled: Flow<Boolean> = MutableStateFlow(true)
 
     override suspend fun setActivePlanId(id: String?) {
         _activePlanId.value = id
+    }
+
+    override suspend fun setAlertsEnabled(enabled: Boolean) {
+        // No-op for this test
+    }
+
+    override suspend fun setWeeklyReminderEnabled(enabled: Boolean) {
+        // No-op for this test
     }
 }

@@ -20,6 +20,14 @@ object WorkScheduler {
         )
     }
 
+    fun scheduleUsageAlerts(context: Context) {
+        scheduleUsageAlertWorker(context)
+    }
+
+    fun cancelUsageAlerts(context: Context) {
+        WorkManager.getInstance(context).cancelUniqueWork("usage_alerts")
+    }
+
     fun scheduleWeeklyReminderWorker(context: Context) {
         // Weekly periodic
         val request = PeriodicWorkRequestBuilder<WeeklyReminderWorker>(7, TimeUnit.DAYS)
@@ -30,5 +38,13 @@ object WorkScheduler {
             ExistingPeriodicWorkPolicy.UPDATE,
             request
         )
+    }
+
+    fun scheduleWeeklyReminder(context: Context) {
+        scheduleWeeklyReminderWorker(context)
+    }
+
+    fun cancelWeeklyReminder(context: Context) {
+        WorkManager.getInstance(context).cancelUniqueWork("weekly_reminder")
     }
 }

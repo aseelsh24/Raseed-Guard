@@ -19,6 +19,7 @@ fun DashboardScreen(
     onNavigateToAddPlan: () -> Unit,
     onNavigateToUpdate: () -> Unit,
     onNavigateToInsights: () -> Unit,
+    onNavigateToSettings: () -> Unit,
     viewModel: DashboardViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -57,8 +58,13 @@ fun DashboardScreen(
                     Text("تحديث")
                 }
             }
-             Button(onClick = onNavigateToInsights, modifier = Modifier.padding(8.dp)) {
-                Text("إحصائيات تفصيلية")
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.padding(8.dp)) {
+                Button(onClick = onNavigateToInsights) {
+                    Text("إحصائيات تفصيلية")
+                }
+                Button(onClick = onNavigateToSettings) {
+                    Text("الإعدادات")
+                }
             }
         }
     }
