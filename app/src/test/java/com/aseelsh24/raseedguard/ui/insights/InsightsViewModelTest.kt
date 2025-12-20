@@ -11,7 +11,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
@@ -52,6 +54,8 @@ class InsightsViewModelTest {
 
     @Test
     fun `uiState is NoActivePlan when no active plan is selected`() = runTest {
+        backgroundScope.launch { viewModel.uiState.collect() }
+
         fakeSettingsRepository.emitActivePlanId(null)
         advanceUntilIdle()
 
@@ -60,6 +64,8 @@ class InsightsViewModelTest {
 
     @Test
     fun `uiState is Success when active plan and logs exist`() = runTest {
+        backgroundScope.launch { viewModel.uiState.collect() }
+
         val plan = Plan(
             id = "plan1",
             type = PlanType.INTERNET,
@@ -80,7 +86,7 @@ class InsightsViewModelTest {
         advanceUntilIdle()
 
         val state = viewModel.uiState.value
-        assertTrue(state is InsightsUiState.Success)
+        assertTrue("Expected Success state but was $state", state is InsightsUiState.Success)
         val successState = state as InsightsUiState.Success
         assertEquals(plan, successState.plan)
         assertEquals(logs, successState.logs)
