@@ -210,10 +210,11 @@ fun formatDate(date: java.time.LocalDateTime?): String {
 @Composable
 fun formatRateWithUnit(rate: Double?, unit: PlanUnit): String {
     if (rate == null) return "—"
+    val displayRate = com.aseelsh24.raseedguard.core.UnitConverter.rateFromNormalizedMbPerDay(rate, unit)
     val unitString = when (unit) {
         PlanUnit.MB -> stringResource(R.string.unit_mb)
         PlanUnit.GB -> stringResource(R.string.unit_gb)
         PlanUnit.MINUTES -> stringResource(R.string.unit_min)
     }
-    return stringResource(R.string.format_rate_per_day, rate, unitString)
+    return stringResource(R.string.format_rate_per_day, displayRate, unitString)
 }

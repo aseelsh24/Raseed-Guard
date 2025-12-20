@@ -271,10 +271,11 @@ private fun getPlanLabel(type: PlanType): String {
 
 @Composable
 private fun formatBalance(amount: Double, unit: PlanUnit): String {
+    val displayAmount = com.aseelsh24.raseedguard.core.UnitConverter.fromNormalizedMb(amount, unit)
     val unitStr = when (unit) {
         PlanUnit.MB -> stringResource(R.string.unit_mb)
         PlanUnit.GB -> stringResource(R.string.unit_gb)
         PlanUnit.MINUTES -> stringResource(R.string.unit_min)
     }
-    return "%.1f %s".format(amount, unitStr)
+    return "%.1f %s".format(displayAmount, unitStr)
 }
