@@ -59,17 +59,17 @@ class UsagePredictor {
                 continue
             }
 
-            val durationHours = Duration.between(start.loggedAt, end.loggedAt).toHours()
+            val durationSeconds = Duration.between(start.loggedAt, end.loggedAt).seconds
 
             // Requirement: zero/negative time interval => ignore
             // Also practically, if duration is very small, rate might be huge. Let's ignore if < 1 hour?
             // "zero/negative time interval => ignore"
-            if (durationHours <= 0) {
+            if (durationSeconds <= 0) {
                  continue
             }
 
             val consumed = startAmount - endAmount
-            val days = durationHours / 24.0
+            val days = durationSeconds / 86400.0
             val intervalRate = consumed / days
 
             // Requirement: rate <= 0 => treat as no depletion prediction.
@@ -137,8 +137,19 @@ class UsagePredictor {
         // Normalize plan details
         val normalizedInitial = normalize(plan.initialAmount, plan.unit)
 
-        // Normalize logs and find the latest log
         val sortedLogs = logs.sortedBy { it.loggedAt }
+
+        // Build augmented logs with baseline if needed
+        val augmentedLogs = if (sortedLogs.isNotEmpty() && plan.startAt.isBefore(sortedLogs.first().loggedAt)) {
+            val baseline = BalanceLog(
+                planId = plan.id,
+                remainingAmount = plan.initialAmount,
+                loggedAt = plan.startAt
+            )
+            listOf(baseline) + sortedLogs
+        } else {
+            sortedLogs
+        }
 
         // Find latest log before or at 'now' to determine remaining amount
         // If there are logs in the future, we should probably ignore them for "current status"
@@ -157,7 +168,7 @@ class UsagePredictor {
 
         val daysUntilEnd = ChronoUnit.DAYS.between(now, plan.endAt).coerceAtLeast(0)
 
-        val rate = dailyRateFromLogs(sortedLogs, plan.unit)
+        val rate = dailyRateFromLogs(augmentedLogs, plan.unit)
 
         val safeUsage = recommendedSafeDailyUsage(remainingNormalized, daysUntilEnd.toDouble())
 
