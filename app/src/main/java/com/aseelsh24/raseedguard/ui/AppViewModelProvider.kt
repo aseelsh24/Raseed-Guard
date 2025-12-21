@@ -8,6 +8,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.aseelsh24.raseedguard.RaseedGuardApplication
 import com.aseelsh24.raseedguard.ui.insights.InsightsViewModel
+import com.aseelsh24.raseedguard.ui.plans.PlansViewModel
 import com.aseelsh24.raseedguard.ui.settings.SettingsViewModel
 
 object AppViewModelProvider {
@@ -42,6 +43,12 @@ object AppViewModelProvider {
             WeeklyUpdateViewModel(
                 planRepository = raseedGuardApplication().container.planRepository,
                 balanceLogRepository = raseedGuardApplication().container.balanceLogRepository,
+                settingsRepository = raseedGuardApplication().container.settingsRepository
+            )
+        }
+        initializer {
+            PlansViewModel(
+                planRepository = raseedGuardApplication().container.planRepository,
                 settingsRepository = raseedGuardApplication().container.settingsRepository
             )
         }

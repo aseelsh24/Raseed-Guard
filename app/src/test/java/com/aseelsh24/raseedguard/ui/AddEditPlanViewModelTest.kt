@@ -85,6 +85,7 @@ class AddEditPlanViewModelTest {
         val existingPlan = Plan(
             id = "test-id",
             type = PlanType.VOICE,
+            category = com.aseelsh24.raseedguard.core.PlanCategory.VOICE,
             startAt = LocalDateTime.now().minusDays(5).with(LocalTime.MIN),
             endAt = LocalDateTime.now().plusDays(5).with(LocalTime.MAX),
             initialAmount = 500.0,

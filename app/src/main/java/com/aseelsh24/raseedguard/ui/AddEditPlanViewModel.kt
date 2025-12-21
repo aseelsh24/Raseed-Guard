@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aseelsh24.raseedguard.core.Plan
+import com.aseelsh24.raseedguard.core.PlanCategory
 import com.aseelsh24.raseedguard.core.PlanType
 import com.aseelsh24.raseedguard.core.Unit as PlanUnit
 import com.aseelsh24.raseedguard.data.repository.PlanRepository
@@ -40,6 +41,7 @@ class AddEditPlanViewModel(
                 _uiState.value = AddEditPlanUiState(
                     planId = plan.id,
                     type = plan.type,
+                    category = plan.category,
                     startAt = plan.startAt,
                     endAt = plan.endAt,
                     initialAmount = plan.initialAmount.toString(),
@@ -57,7 +59,14 @@ class AddEditPlanViewModel(
         val newUnit = if (type == PlanType.VOICE) PlanUnit.MINUTES else {
              if (currentUnit == PlanUnit.MINUTES) PlanUnit.GB else currentUnit
         }
-        _uiState.value = _uiState.value.copy(type = type, unit = newUnit)
+        val newCategory = if (type == PlanType.VOICE) PlanCategory.VOICE else {
+             if (_uiState.value.category == PlanCategory.VOICE) PlanCategory.MOBILE else _uiState.value.category
+        }
+        _uiState.value = _uiState.value.copy(type = type, unit = newUnit, category = newCategory)
+    }
+
+    fun updateCategory(category: PlanCategory) {
+        _uiState.value = _uiState.value.copy(category = category)
     }
 
     fun updateStartAt(startAt: LocalDateTime) {
@@ -95,6 +104,7 @@ class AddEditPlanViewModel(
         val plan = Plan(
             id = state.planId ?: UUID.randomUUID().toString(),
             type = state.type,
+            category = state.category,
             startAt = state.startAt,
             endAt = state.endAt,
             initialAmount = amount,
@@ -111,6 +121,7 @@ class AddEditPlanViewModel(
 data class AddEditPlanUiState(
     val planId: String? = null,
     val type: PlanType = PlanType.INTERNET,
+    val category: PlanCategory = PlanCategory.MOBILE,
     val startAt: LocalDateTime = LocalDateTime.now().with(LocalTime.MIN), // Start of today
     val endAt: LocalDateTime = LocalDateTime.now().plusDays(30).with(LocalTime.MAX), // End of 30 days
     val initialAmount: String = "",

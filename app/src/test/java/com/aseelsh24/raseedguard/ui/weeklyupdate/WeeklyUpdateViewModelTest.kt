@@ -69,6 +69,7 @@ class WeeklyUpdateViewModelTest {
         val plan = Plan(
             id = "plan1",
             type = PlanType.INTERNET,
+            category = com.aseelsh24.raseedguard.core.PlanCategory.MOBILE,
             startAt = LocalDateTime.now(),
             endAt = LocalDateTime.now().plusDays(30),
             initialAmount = 100.0,

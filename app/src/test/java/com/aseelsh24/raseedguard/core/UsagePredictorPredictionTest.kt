@@ -16,6 +16,7 @@ class UsagePredictorPredictionTest {
         val plan = Plan(
             id = "plan1",
             type = PlanType.INTERNET,
+            category = PlanCategory.MOBILE,
             startAt = now.minusDays(10),
             endAt = now.plusDays(10),
             initialAmount = 5.0,
@@ -47,6 +48,7 @@ class UsagePredictorPredictionTest {
         val plan = Plan(
             id = "plan2",
             type = PlanType.INTERNET,
+            category = PlanCategory.MOBILE,
             startAt = now.minusHours(1),
             endAt = now.plusDays(30),
             initialAmount = 1000.0,

@@ -69,6 +69,7 @@ class InsightsViewModelTest {
         val plan = Plan(
             id = "plan1",
             type = PlanType.INTERNET,
+            category = com.aseelsh24.raseedguard.core.PlanCategory.MOBILE,
             startAt = LocalDateTime.now().minusDays(10),
             endAt = LocalDateTime.now().plusDays(20),
             initialAmount = 100.0,

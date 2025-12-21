@@ -18,6 +18,8 @@ import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
@@ -39,6 +41,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.aseelsh24.raseedguard.R
+import com.aseelsh24.raseedguard.core.PlanCategory
 import com.aseelsh24.raseedguard.core.PlanType
 import com.aseelsh24.raseedguard.core.Unit as PlanUnit
 import java.time.Instant
@@ -89,6 +92,15 @@ fun AddEditPlanScreen(
                     Text(stringResource(R.string.label_plan_type_voice))
                 }
             }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Plan Category Selector
+            PlanCategorySelector(
+                planType = uiState.type,
+                selectedCategory = uiState.category,
+                onCategorySelected = { viewModel.updateCategory(it) }
+            )
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -189,6 +201,63 @@ fun AddEditPlanScreen(
             }
         ) {
             DatePicker(state = datePickerState)
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun PlanCategorySelector(
+    planType: PlanType,
+    selectedCategory: PlanCategory,
+    onCategorySelected: (PlanCategory) -> Unit
+) {
+    if (planType == PlanType.VOICE) {
+        OutlinedTextField(
+            value = stringResource(R.string.plan_type_voice),
+            onValueChange = {},
+            readOnly = true,
+            label = { Text(stringResource(R.string.label_plan_category)) },
+            enabled = false,
+            modifier = Modifier.fillMaxWidth()
+        )
+        return
+    }
+
+    // For Internet, allow Mobile or Home
+    var expanded by remember { mutableStateOf(false) }
+
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = !expanded }
+    ) {
+        OutlinedTextField(
+            value = if (selectedCategory == PlanCategory.HOME) stringResource(R.string.plan_category_home) else stringResource(R.string.plan_category_mobile),
+            onValueChange = {},
+            readOnly = true,
+            label = { Text(stringResource(R.string.label_plan_category)) },
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+            colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
+            modifier = Modifier.menuAnchor().fillMaxWidth()
+        )
+        ExposedDropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            DropdownMenuItem(
+                text = { Text(stringResource(R.string.plan_category_mobile)) },
+                onClick = {
+                    onCategorySelected(PlanCategory.MOBILE)
+                    expanded = false
+                }
+            )
+            DropdownMenuItem(
+                text = { Text(stringResource(R.string.plan_category_home)) },
+                onClick = {
+                    onCategorySelected(PlanCategory.HOME)
+                    expanded = false
+                }
+            )
         }
     }
 }

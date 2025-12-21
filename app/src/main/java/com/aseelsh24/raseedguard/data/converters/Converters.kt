@@ -36,4 +36,14 @@ class Converters {
     fun unitToString(unit: PlanUnit?): String? {
         return unit?.name
     }
+
+    @TypeConverter
+    fun fromPlanCategory(value: String?): com.aseelsh24.raseedguard.core.PlanCategory? {
+        return value?.let { com.aseelsh24.raseedguard.core.PlanCategory.valueOf(it) }
+    }
+
+    @TypeConverter
+    fun planCategoryToString(category: com.aseelsh24.raseedguard.core.PlanCategory?): String? {
+        return category?.name
+    }
 }

@@ -141,7 +141,7 @@ class UsagePredictorTest {
 
     @Test
     fun `predict returns correct full result`() {
-        val plan = Plan("1", PlanType.INTERNET, planStart, planEnd, 3000.0, Unit.MB)
+        val plan = Plan("1", PlanType.INTERNET, PlanCategory.MOBILE, planStart, planEnd, 3000.0, Unit.MB)
         // 5 days ago: 3000
         // 4 days ago: 2900 (Rate 100)
         // ...
@@ -174,7 +174,7 @@ class UsagePredictorTest {
 
      @Test
     fun `predict handles insufficient logs`() {
-        val plan = Plan("1", PlanType.INTERNET, planStart, planEnd, 3000.0, Unit.MB)
+        val plan = Plan("1", PlanType.INTERNET, PlanCategory.MOBILE, planStart, planEnd, 3000.0, Unit.MB)
         val logs = listOf(
             BalanceLog("1", now, 3000.0)
         )
