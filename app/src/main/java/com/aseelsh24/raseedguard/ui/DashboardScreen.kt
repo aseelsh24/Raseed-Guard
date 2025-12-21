@@ -7,6 +7,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
@@ -36,6 +37,7 @@ fun DashboardScreen(
     onNavigateToUpdate: () -> Unit,
     onNavigateToInsights: () -> Unit,
     onNavigateToSettings: () -> Unit,
+    onNavigateToPlans: () -> Unit,
     viewModel: DashboardViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -48,6 +50,9 @@ fun DashboardScreen(
                     IconButton(onClick = onNavigateToInsights) {
                         // Replaced BarChart with DateRange (Core)
                         Icon(Icons.Default.DateRange, contentDescription = stringResource(R.string.action_insights))
+                    }
+                    IconButton(onClick = onNavigateToPlans) {
+                        Icon(Icons.Default.List, contentDescription = "Plans") // TODO: Resource
                     }
                     IconButton(onClick = onNavigateToSettings) {
                         Icon(Icons.Default.Settings, contentDescription = stringResource(R.string.action_settings))

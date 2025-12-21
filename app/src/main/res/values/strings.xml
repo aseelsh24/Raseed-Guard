@@ -3,6 +3,7 @@
 
     <!-- Dashboard -->
     <string name="action_insights">Insights</string>
+    <string name="action_plans">Plans</string>
     <string name="action_settings">Settings</string>
     <string name="action_add_plan">Add Plan</string>
     <string name="dashboard_no_active_plan">No active plan. Add one!</string>
@@ -21,12 +22,21 @@
     <string name="unit_gb">GB</string>
     <string name="unit_min">min</string>
 
+    <!-- Plans -->
+    <string name="title_plans">Plans</string>
+    <string name="plan_category_mobile">Mobile Internet</string>
+    <string name="plan_category_home">Home Internet</string>
+    <string name="plan_category_voice">Voice</string>
+    <string name="action_set_active">Set Active</string>
+    <string name="content_description_active_plan">Active Plan</string>
+
     <!-- Add/Edit Plan -->
     <string name="title_add_plan">Add Plan</string>
     <string name="title_edit_plan">Edit Plan</string>
     <string name="label_plan_type">Plan Type</string>
     <string name="label_plan_type_internet">Internet</string>
     <string name="label_plan_type_voice">Voice</string>
+    <string name="label_plan_category">Category</string>
     <string name="label_start_date">Start Date</string>
     <string name="label_end_date">End Date</string>
     <string name="label_initial_amount">Plan Capacity</string>

@@ -55,6 +55,7 @@ class DashboardViewModelActivePlanTest {
         val plan = Plan(
             id = "plan1",
             type = PlanType.INTERNET,
+            category = com.aseelsh24.raseedguard.core.PlanCategory.MOBILE,
             startAt = LocalDateTime.now(),
             endAt = LocalDateTime.now().plusDays(30),
             initialAmount = 100.0,
@@ -77,6 +78,7 @@ class DashboardViewModelActivePlanTest {
         val plan = Plan(
             id = "new_plan",
             type = PlanType.INTERNET,
+            category = com.aseelsh24.raseedguard.core.PlanCategory.MOBILE,
             startAt = LocalDateTime.now(),
             endAt = LocalDateTime.now().plusDays(30),
             initialAmount = 100.0,

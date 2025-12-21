@@ -22,7 +22,9 @@ class AppDataContainer(private val context: Context) : AppContainer {
             context,
             AppDatabase::class.java,
             "raseed_guard_db"
-        ).build()
+        )
+        .addMigrations(AppDatabase.MIGRATION_1_2)
+        .build()
     }
 
     override val planRepository: PlanRepository by lazy {

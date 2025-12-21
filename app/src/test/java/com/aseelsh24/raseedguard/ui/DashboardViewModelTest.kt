@@ -62,6 +62,7 @@ class DashboardViewModelTest {
         val plan = Plan(
             id = "1",
             type = PlanType.INTERNET,
+            category = PlanCategory.MOBILE,
             startAt = LocalDateTime.now().minusDays(1),
             endAt = LocalDateTime.now().plusDays(29),
             initialAmount = 100.0,

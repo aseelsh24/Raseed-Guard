@@ -7,3 +7,7 @@ enum class PlanType {
 enum class Unit {
     MB, GB, MINUTES
 }
+
+enum class PlanCategory {
+    MOBILE, HOME, VOICE
+}
