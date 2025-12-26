@@ -9,6 +9,7 @@ import com.aseelsh24.raseedguard.data.repository.PlanRepository
 import com.aseelsh24.raseedguard.data.repository.SettingsRepository
 import com.aseelsh24.raseedguard.ui.DashboardUiState
 import com.aseelsh24.raseedguard.ui.DashboardViewModel
+import com.aseelsh24.raseedguard.ui.theme.ThemeMode
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -123,6 +124,8 @@ class FakeSettingsRepository : SettingsRepository {
     override val activePlanId: Flow<String?> = _activePlanId
     override val alertsEnabled: Flow<Boolean> = MutableStateFlow(true)
     override val weeklyReminderEnabled: Flow<Boolean> = MutableStateFlow(true)
+    override val themeMode: Flow<ThemeMode> = MutableStateFlow(ThemeMode.SYSTEM)
+    override val dynamicColorEnabled: Flow<Boolean> = MutableStateFlow(false)
 
     override suspend fun setActivePlanId(id: String?) {
         _activePlanId.value = id
@@ -130,4 +133,6 @@ class FakeSettingsRepository : SettingsRepository {
 
     override suspend fun setAlertsEnabled(enabled: Boolean) {}
     override suspend fun setWeeklyReminderEnabled(enabled: Boolean) {}
+    override suspend fun setThemeMode(mode: ThemeMode) {}
+    override suspend fun setDynamicColorEnabled(enabled: Boolean) {}
 }
