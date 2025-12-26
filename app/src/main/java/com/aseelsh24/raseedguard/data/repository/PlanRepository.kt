@@ -11,6 +11,7 @@ interface PlanRepository {
     fun getAllPlans(): Flow<List<Plan>>
     fun getPlan(id: String): Flow<Plan?>
     suspend fun insertPlan(plan: Plan)
+    suspend fun deletePlan(id: String)
 }
 
 class PlanRepositoryImpl(private val planDao: PlanDao) : PlanRepository {
@@ -26,5 +27,9 @@ class PlanRepositoryImpl(private val planDao: PlanDao) : PlanRepository {
 
     override suspend fun insertPlan(plan: Plan) {
         planDao.insertPlan(plan.toEntity())
+    }
+
+    override suspend fun deletePlan(id: String) {
+        planDao.deletePlan(id)
     }
 }

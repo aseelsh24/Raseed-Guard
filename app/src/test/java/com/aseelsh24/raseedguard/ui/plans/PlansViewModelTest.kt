@@ -104,6 +104,76 @@ class PlansViewModelTest {
 
         assertEquals("plan1", fakeSettingsRepository.activePlanId.first())
     }
+
+    @Test
+    fun `deletePlan reassigns active plan to candidate when active plan is deleted`() = runTest {
+        backgroundScope.launch { viewModel.uiState.collect {} }
+
+        val plan1 = Plan(
+            id = "plan1",
+            type = PlanType.INTERNET,
+            category = PlanCategory.MOBILE,
+            startAt = LocalDateTime.now(),
+            endAt = LocalDateTime.now().plusDays(30),
+            initialAmount = 100.0,
+            unit = PlanUnit.GB
+        )
+        val plan2 = Plan(
+            id = "plan2",
+            type = PlanType.VOICE,
+            category = PlanCategory.VOICE,
+            startAt = LocalDateTime.now(),
+            endAt = LocalDateTime.now().plusDays(30),
+            initialAmount = 500.0,
+            unit = PlanUnit.MINUTES
+        )
+
+        fakePlanRepository.setPlans(listOf(plan1, plan2))
+        fakeSettingsRepository.emitActivePlanId("plan1")
+        advanceUntilIdle()
+
+        viewModel.deletePlan("plan1")
+        advanceUntilIdle()
+
+        // plan1 should be deleted
+        val plans = fakePlanRepository.getAllPlans().first()
+        assertEquals(1, plans.size)
+        assertEquals("plan2", plans[0].id)
+
+        // active plan should be switched to plan2
+        val activeId = fakeSettingsRepository.activePlanId.first()
+        assertEquals("plan2", activeId)
+    }
+
+    @Test
+    fun `deletePlan sets active plan to null when last active plan is deleted`() = runTest {
+        backgroundScope.launch { viewModel.uiState.collect {} }
+
+        val plan1 = Plan(
+            id = "plan1",
+            type = PlanType.INTERNET,
+            category = PlanCategory.MOBILE,
+            startAt = LocalDateTime.now(),
+            endAt = LocalDateTime.now().plusDays(30),
+            initialAmount = 100.0,
+            unit = PlanUnit.GB
+        )
+
+        fakePlanRepository.setPlans(listOf(plan1))
+        fakeSettingsRepository.emitActivePlanId("plan1")
+        advanceUntilIdle()
+
+        viewModel.deletePlan("plan1")
+        advanceUntilIdle()
+
+        // plan1 should be deleted
+        val plans = fakePlanRepository.getAllPlans().first()
+        assertEquals(0, plans.size)
+
+        // active plan should be null
+        val activeId = fakeSettingsRepository.activePlanId.first()
+        assertEquals(null, activeId)
+    }
 }
 
 class FakePlanRepository : PlanRepository {
@@ -119,6 +189,10 @@ class FakePlanRepository : PlanRepository {
 
     override suspend fun insertPlan(plan: Plan) {
         // no-op
+    }
+
+    override suspend fun deletePlan(id: String) {
+        plansFlow.value = plansFlow.value.filter { it.id != id }
     }
 }
 

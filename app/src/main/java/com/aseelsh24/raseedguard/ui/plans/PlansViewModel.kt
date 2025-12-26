@@ -40,6 +40,21 @@ class PlansViewModel(
             settingsRepository.setActivePlanId(planId)
         }
     }
+
+    fun deletePlan(planId: String) {
+        viewModelScope.launch {
+            // Check if deleted plan is active
+            val currentPlans = uiState.value.plans.map { it.plan }
+            val isDeletedPlanActive = uiState.value.plans.find { it.plan.id == planId }?.isActive == true
+
+            if (isDeletedPlanActive) {
+                val candidate = currentPlans.firstOrNull { it.id != planId }
+                settingsRepository.setActivePlanId(candidate?.id)
+            }
+
+            planRepository.deletePlan(planId)
+        }
+    }
 }
 
 data class PlansUiState(

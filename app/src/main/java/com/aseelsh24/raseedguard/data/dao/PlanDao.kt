@@ -17,4 +17,7 @@ interface PlanDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPlan(plan: PlanEntity)
+
+    @Query("DELETE FROM plans WHERE id = :id")
+    suspend fun deletePlan(id: String)
 }
