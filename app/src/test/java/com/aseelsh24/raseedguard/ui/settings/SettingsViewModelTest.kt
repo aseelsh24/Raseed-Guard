@@ -2,6 +2,7 @@ package com.aseelsh24.raseedguard.ui.settings
 
 import android.app.Application
 import com.aseelsh24.raseedguard.data.repository.SettingsRepository
+import com.aseelsh24.raseedguard.ui.theme.ThemeMode
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -24,10 +25,14 @@ class FakeSettingsRepository : SettingsRepository {
     private val _alertsEnabled = MutableStateFlow(true)
     private val _weeklyReminderEnabled = MutableStateFlow(true)
     private val _activePlanId = MutableStateFlow<String?>(null)
+    private val _themeMode = MutableStateFlow(ThemeMode.SYSTEM)
+    private val _dynamicColorEnabled = MutableStateFlow(false)
 
     override val alertsEnabled: Flow<Boolean> = _alertsEnabled.asStateFlow()
     override val weeklyReminderEnabled: Flow<Boolean> = _weeklyReminderEnabled.asStateFlow()
     override val activePlanId: Flow<String?> = _activePlanId.asStateFlow()
+    override val themeMode: Flow<ThemeMode> = _themeMode.asStateFlow()
+    override val dynamicColorEnabled: Flow<Boolean> = _dynamicColorEnabled.asStateFlow()
 
     override suspend fun setActivePlanId(id: String?) {
         _activePlanId.value = id
@@ -39,6 +44,14 @@ class FakeSettingsRepository : SettingsRepository {
 
     override suspend fun setWeeklyReminderEnabled(enabled: Boolean) {
         _weeklyReminderEnabled.value = enabled
+    }
+
+    override suspend fun setThemeMode(mode: ThemeMode) {
+        _themeMode.value = mode
+    }
+
+    override suspend fun setDynamicColorEnabled(enabled: Boolean) {
+        _dynamicColorEnabled.value = enabled
     }
 }
 
