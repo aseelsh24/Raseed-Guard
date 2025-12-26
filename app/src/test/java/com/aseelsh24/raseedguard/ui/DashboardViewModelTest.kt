@@ -112,6 +112,10 @@ class FakePlanRepository : PlanRepository {
         }
         plansFlow.value = currentPlans
     }
+
+    override suspend fun deletePlan(id: String) {
+        // no-op
+    }
 }
 
 class FakeBalanceLogRepository : BalanceLogRepository {

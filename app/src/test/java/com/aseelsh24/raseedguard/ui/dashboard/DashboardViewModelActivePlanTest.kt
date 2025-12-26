@@ -107,6 +107,10 @@ class FakePlanRepository : PlanRepository {
     override suspend fun insertPlan(plan: Plan) {
         addPlan(plan)
     }
+
+    override suspend fun deletePlan(id: String) {
+        // no-op
+    }
 }
 
 class FakeBalanceLogRepository : BalanceLogRepository {

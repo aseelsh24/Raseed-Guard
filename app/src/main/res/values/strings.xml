@@ -29,6 +29,9 @@
     <string name="plan_category_voice">Voice</string>
     <string name="action_set_active">Set Active</string>
     <string name="content_description_active_plan">Active Plan</string>
+    <string name="dialog_delete_plan_title">Delete plan?</string>
+    <string name="dialog_delete_plan_message">This action cannot be undone.</string>
+    <string name="action_delete">Delete</string>
 
     <!-- Add/Edit Plan -->
     <string name="title_add_plan">Add Plan</string>
