@@ -4,7 +4,7 @@ enum class PlanType {
     INTERNET, VOICE, MIXED
 }
 
-enum class Unit {
+enum class PlanUnit {
     MB, GB, MINUTES
 }
 

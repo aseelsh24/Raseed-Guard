@@ -2,7 +2,9 @@ package com.aseelsh24.raseedguard.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.aseelsh24.raseedguard.core.*
+import com.aseelsh24.raseedguard.core.Plan
+import com.aseelsh24.raseedguard.core.PredictionResult
+import com.aseelsh24.raseedguard.core.UsagePredictor
 import com.aseelsh24.raseedguard.data.repository.BalanceLogRepository
 import com.aseelsh24.raseedguard.data.repository.PlanRepository
 import com.aseelsh24.raseedguard.data.repository.SettingsRepository

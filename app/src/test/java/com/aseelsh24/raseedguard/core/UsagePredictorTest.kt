@@ -31,7 +31,7 @@ class UsagePredictorTest {
         val logs = listOf(
             BalanceLog("1", now.minusDays(1), 100.0)
         )
-        assertNull(predictor.dailyRateFromLogs(logs, Unit.MB))
+        assertNull(predictor.dailyRateFromLogs(logs, PlanUnit.MB))
     }
 
     @Test
@@ -43,7 +43,7 @@ class UsagePredictorTest {
             BalanceLog("1", now.minusDays(1), 100.0),
             BalanceLog("1", now, 80.0)
         )
-        val rate = predictor.dailyRateFromLogs(logs, Unit.MB)
+        val rate = predictor.dailyRateFromLogs(logs, PlanUnit.MB)
         assertEquals(20.0, rate!!, 0.01)
     }
 
@@ -62,7 +62,7 @@ class UsagePredictorTest {
             BalanceLog("1", now.minusDays(1), 80.0),
             BalanceLog("1", now, 70.0)
         )
-        val rate = predictor.dailyRateFromLogs(logs, Unit.MB)
+        val rate = predictor.dailyRateFromLogs(logs, PlanUnit.MB)
         assertEquals(15.0, rate!!, 0.01)
     }
 
@@ -82,7 +82,7 @@ class UsagePredictorTest {
             BalanceLog("1", now.minusDays(1), 120.0),
             BalanceLog("1", now, 100.0)
         )
-        val rate = predictor.dailyRateFromLogs(logs, Unit.MB)
+        val rate = predictor.dailyRateFromLogs(logs, PlanUnit.MB)
         assertEquals(20.0, rate!!, 0.01)
     }
 
@@ -94,7 +94,7 @@ class UsagePredictorTest {
             BalanceLog("1", now.minusDays(1), 1.0),
             BalanceLog("1", now, 0.9)
         )
-        val rate = predictor.dailyRateFromLogs(logs, Unit.GB)
+        val rate = predictor.dailyRateFromLogs(logs, PlanUnit.GB)
         assertEquals(102.4, rate!!, 0.01)
     }
 
@@ -141,7 +141,7 @@ class UsagePredictorTest {
 
     @Test
     fun `predict returns correct full result`() {
-        val plan = Plan("1", PlanType.INTERNET, PlanCategory.MOBILE, planStart, planEnd, 3000.0, Unit.MB)
+        val plan = Plan("1", PlanType.INTERNET, PlanCategory.MOBILE, planStart, planEnd, 3000.0, PlanUnit.MB)
         // 5 days ago: 3000
         // 4 days ago: 2900 (Rate 100)
         // ...
@@ -174,7 +174,7 @@ class UsagePredictorTest {
 
      @Test
     fun `predict handles insufficient logs`() {
-        val plan = Plan("1", PlanType.INTERNET, PlanCategory.MOBILE, planStart, planEnd, 3000.0, Unit.MB)
+        val plan = Plan("1", PlanType.INTERNET, PlanCategory.MOBILE, planStart, planEnd, 3000.0, PlanUnit.MB)
         val logs = listOf(
             BalanceLog("1", now, 3000.0)
         )

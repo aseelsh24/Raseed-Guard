@@ -6,7 +6,7 @@ import com.aseelsh24.raseedguard.core.Plan
 import com.aseelsh24.raseedguard.core.PlanCategory
 import com.aseelsh24.raseedguard.core.PlanType
 import java.time.LocalDateTime
-import com.aseelsh24.raseedguard.core.Unit as PlanUnit
+import com.aseelsh24.raseedguard.core.PlanUnit
 
 @Entity(tableName = "plans")
 data class PlanEntity(

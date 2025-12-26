@@ -4,7 +4,7 @@ import androidx.room.TypeConverter
 import com.aseelsh24.raseedguard.core.PlanType
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import com.aseelsh24.raseedguard.core.Unit as PlanUnit
+import com.aseelsh24.raseedguard.core.PlanUnit
 
 class Converters {
     @TypeConverter

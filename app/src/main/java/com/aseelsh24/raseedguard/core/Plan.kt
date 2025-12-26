@@ -9,5 +9,5 @@ data class Plan(
     val startAt: LocalDateTime,
     val endAt: LocalDateTime,
     val initialAmount: Double,
-    val unit: Unit
+    val unit: PlanUnit
 )
