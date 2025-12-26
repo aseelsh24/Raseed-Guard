@@ -4,8 +4,11 @@ import android.content.Context
 import androidx.datastore.preferences.core.edit
 import com.aseelsh24.raseedguard.data.settings.ACTIVE_PLAN_ID
 import com.aseelsh24.raseedguard.data.settings.ALERTS_ENABLED
+import com.aseelsh24.raseedguard.data.settings.DYNAMIC_COLOR_ENABLED
+import com.aseelsh24.raseedguard.data.settings.THEME_MODE
 import com.aseelsh24.raseedguard.data.settings.WEEKLY_REMINDER_ENABLED
 import com.aseelsh24.raseedguard.data.settings.settingsDataStore
+import com.aseelsh24.raseedguard.ui.theme.ThemeMode
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -24,6 +27,21 @@ class SettingsRepositoryImpl(private val context: Context) : SettingsRepository 
     override val weeklyReminderEnabled: Flow<Boolean> = context.settingsDataStore.data
         .map { preferences ->
             preferences[WEEKLY_REMINDER_ENABLED] ?: true
+        }
+
+    override val themeMode: Flow<ThemeMode> = context.settingsDataStore.data
+        .map { preferences ->
+            val modeString = preferences[THEME_MODE]
+            when (modeString) {
+                "light" -> ThemeMode.LIGHT
+                "dark" -> ThemeMode.DARK
+                else -> ThemeMode.SYSTEM
+            }
+        }
+
+    override val dynamicColorEnabled: Flow<Boolean> = context.settingsDataStore.data
+        .map { preferences ->
+            preferences[DYNAMIC_COLOR_ENABLED] ?: false
         }
 
     override suspend fun setActivePlanId(id: String?) {
@@ -45,6 +63,22 @@ class SettingsRepositoryImpl(private val context: Context) : SettingsRepository 
     override suspend fun setWeeklyReminderEnabled(enabled: Boolean) {
         context.settingsDataStore.edit { preferences ->
             preferences[WEEKLY_REMINDER_ENABLED] = enabled
+        }
+    }
+
+    override suspend fun setThemeMode(mode: ThemeMode) {
+        context.settingsDataStore.edit { preferences ->
+            preferences[THEME_MODE] = when (mode) {
+                ThemeMode.LIGHT -> "light"
+                ThemeMode.DARK -> "dark"
+                ThemeMode.SYSTEM -> "system"
+            }
+        }
+    }
+
+    override suspend fun setDynamicColorEnabled(enabled: Boolean) {
+        context.settingsDataStore.edit { preferences ->
+            preferences[DYNAMIC_COLOR_ENABLED] = enabled
         }
     }
 }
