@@ -1,6 +1,6 @@
 package com.aseelsh24.raseedguard.core
 
-import com.aseelsh24.raseedguard.core.Unit as PlanUnit
+import com.aseelsh24.raseedguard.core.PlanUnit
 
 object UnitConverter {
     private const val MB_PER_GB = 1024.0

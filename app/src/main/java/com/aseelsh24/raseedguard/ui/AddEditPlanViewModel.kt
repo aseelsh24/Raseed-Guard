@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.aseelsh24.raseedguard.core.Plan
 import com.aseelsh24.raseedguard.core.PlanCategory
 import com.aseelsh24.raseedguard.core.PlanType
-import com.aseelsh24.raseedguard.core.Unit as PlanUnit
+import com.aseelsh24.raseedguard.core.PlanUnit
 import com.aseelsh24.raseedguard.data.repository.PlanRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

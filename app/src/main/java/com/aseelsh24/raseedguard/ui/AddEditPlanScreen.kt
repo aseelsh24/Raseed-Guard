@@ -43,7 +43,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.aseelsh24.raseedguard.R
 import com.aseelsh24.raseedguard.core.PlanCategory
 import com.aseelsh24.raseedguard.core.PlanType
-import com.aseelsh24.raseedguard.core.Unit as PlanUnit
+import com.aseelsh24.raseedguard.core.PlanUnit
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter

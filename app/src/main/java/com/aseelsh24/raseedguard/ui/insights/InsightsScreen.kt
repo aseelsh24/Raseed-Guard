@@ -34,7 +34,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.aseelsh24.raseedguard.R
 import com.aseelsh24.raseedguard.core.BalanceLog
 import com.aseelsh24.raseedguard.core.PredictionResult
-import com.aseelsh24.raseedguard.core.Unit as PlanUnit
+import com.aseelsh24.raseedguard.core.PlanUnit
 import com.aseelsh24.raseedguard.ui.AppViewModelProvider
 import com.aseelsh24.raseedguard.ui.components.MetricCard
 import java.time.format.DateTimeFormatter

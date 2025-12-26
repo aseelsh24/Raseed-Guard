@@ -27,7 +27,7 @@ import com.aseelsh24.raseedguard.core.Plan
 import com.aseelsh24.raseedguard.core.PlanType
 import com.aseelsh24.raseedguard.core.PredictionResult
 import com.aseelsh24.raseedguard.core.RiskLevel
-import com.aseelsh24.raseedguard.core.Unit as PlanUnit
+import com.aseelsh24.raseedguard.core.PlanUnit
 import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
