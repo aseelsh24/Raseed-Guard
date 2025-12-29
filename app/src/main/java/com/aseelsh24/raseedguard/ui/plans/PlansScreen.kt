@@ -46,6 +46,7 @@ import com.aseelsh24.raseedguard.core.PlanCategory
 import com.aseelsh24.raseedguard.core.PlanType
 import com.aseelsh24.raseedguard.ui.AppViewModelProvider
 import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -184,7 +185,7 @@ fun PlanCard(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+            val formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)
             Text(
                 text = "${planModel.plan.startAt.format(formatter)} - ${planModel.plan.endAt.format(formatter)}",
                 style = MaterialTheme.typography.bodySmall

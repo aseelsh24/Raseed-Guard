@@ -29,6 +29,7 @@ import com.aseelsh24.raseedguard.core.PredictionResult
 import com.aseelsh24.raseedguard.core.RiskLevel
 import com.aseelsh24.raseedguard.core.Unit as PlanUnit
 import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -59,7 +60,7 @@ fun DashboardScreen(
                         Icon(Icons.Default.DateRange, contentDescription = stringResource(R.string.action_insights))
                     }
                     IconButton(onClick = onNavigateToPlans) {
-                        Icon(Icons.Default.List, contentDescription = "Plans") // TODO: Resource
+                        Icon(Icons.Default.List, contentDescription = stringResource(R.string.content_description_plans))
                     }
                     IconButton(onClick = onNavigateToSettings) {
                         Icon(Icons.Default.Settings, contentDescription = stringResource(R.string.action_settings))
@@ -102,7 +103,7 @@ fun DashboardScreen(
                 }
                 is DashboardUiState.Error -> {
                     Text(
-                        text = "Error: ${state.message}",
+                        text = stringResource(R.string.error_generic, state.message),
                         color = MaterialTheme.colorScheme.error,
                         modifier = Modifier.align(Alignment.Center)
                     )
@@ -199,7 +200,7 @@ fun DashboardPlanCard(
             Divider()
 
             val dateText = prediction.predictedDepletionAt?.let {
-                it.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                it.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM))
             } ?: "—"
 
             Text(

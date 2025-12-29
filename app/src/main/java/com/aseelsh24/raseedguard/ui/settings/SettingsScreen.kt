@@ -59,7 +59,7 @@ fun SettingsScreen(
                 .padding(16.dp)
         ) {
             Text(
-                text = "Appearance",
+                text = stringResource(R.string.settings_category_appearance),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.padding(bottom = 8.dp)
@@ -72,7 +72,7 @@ fun SettingsScreen(
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 SettingItem(
-                    title = "Dynamic Color",
+                    title = stringResource(R.string.settings_dynamic_color),
                     checked = dynamicColorEnabled,
                     onCheckedChange = { viewModel.setDynamicColorEnabled(it) }
                 )
@@ -83,7 +83,7 @@ fun SettingsScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = "Notifications",
+                text = stringResource(R.string.settings_category_notifications),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.padding(bottom = 8.dp)
@@ -110,17 +110,17 @@ fun ThemeSelection(
 ) {
     Column {
         ThemeOption(
-            title = "System Default",
+            title = stringResource(R.string.settings_theme_system),
             selected = currentMode == ThemeMode.SYSTEM,
             onClick = { onModeSelected(ThemeMode.SYSTEM) }
         )
         ThemeOption(
-            title = "Light",
+            title = stringResource(R.string.settings_theme_light),
             selected = currentMode == ThemeMode.LIGHT,
             onClick = { onModeSelected(ThemeMode.LIGHT) }
         )
         ThemeOption(
-            title = "Dark",
+            title = stringResource(R.string.settings_theme_dark),
             selected = currentMode == ThemeMode.DARK,
             onClick = { onModeSelected(ThemeMode.DARK) }
         )

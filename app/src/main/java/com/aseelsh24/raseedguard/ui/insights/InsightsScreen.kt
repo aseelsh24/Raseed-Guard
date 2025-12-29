@@ -38,6 +38,7 @@ import com.aseelsh24.raseedguard.core.Unit as PlanUnit
 import com.aseelsh24.raseedguard.ui.AppViewModelProvider
 import com.aseelsh24.raseedguard.ui.components.MetricCard
 import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -213,7 +214,7 @@ fun SimpleTrendChart(logs: List<BalanceLog>, modifier: Modifier = Modifier) {
 fun formatDate(date: java.time.LocalDateTime?): String {
     if (date == null) return "—"
     return try {
-        date.format(DateTimeFormatter.ofPattern("dd MMM", Locale.getDefault()))
+        date.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM))
     } catch (e: Exception) {
         date.toString()
     }

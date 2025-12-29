@@ -47,6 +47,7 @@ import com.aseelsh24.raseedguard.core.Unit as PlanUnit
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 import java.time.LocalDateTime
 import java.time.LocalTime
 
@@ -269,7 +270,7 @@ fun DateInput(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    val formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)
     Box(modifier = modifier) {
         OutlinedTextField(
             value = date.format(formatter),

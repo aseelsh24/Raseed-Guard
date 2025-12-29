@@ -72,4 +72,14 @@
     <string name="channel_desc_reminders">تذكير أسبوعي لتسجيل الرصيد</string>
 
     <string name="risk_level_critical_suffix">مستوى حرج</string>
+
+    <!-- Missing Resources -->
+    <string name="content_description_plans">الخطط</string>
+    <string name="error_generic">خطأ: %1$s</string>
+    <string name="settings_category_appearance">المظهر</string>
+    <string name="settings_dynamic_color">ألوان ديناميكية</string>
+    <string name="settings_theme_system">النظام الافتراضي</string>
+    <string name="settings_theme_light">فاتح</string>
+    <string name="settings_theme_dark">داكن</string>
+    <string name="settings_category_notifications">الإشعارات</string>
 </resources>
