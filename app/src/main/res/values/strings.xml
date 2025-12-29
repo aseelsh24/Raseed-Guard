@@ -85,4 +85,14 @@
     <string name="channel_desc_reminders">Weekly reminder to log balance</string>
 
     <string name="risk_level_critical_suffix">Critical Level</string>
+
+    <!-- Missing Resources -->
+    <string name="content_description_plans">Plans</string>
+    <string name="error_generic">Error: %1$s</string>
+    <string name="settings_category_appearance">Appearance</string>
+    <string name="settings_dynamic_color">Dynamic Color</string>
+    <string name="settings_theme_system">System Default</string>
+    <string name="settings_theme_light">Light</string>
+    <string name="settings_theme_dark">Dark</string>
+    <string name="settings_category_notifications">Notifications</string>
 </resources>
