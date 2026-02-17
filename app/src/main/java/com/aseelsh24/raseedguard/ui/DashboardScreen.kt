@@ -5,6 +5,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -32,13 +33,55 @@ fun DashboardScreen(
 
             when (val state = uiState) {
                 is DashboardUiState.Loading -> {
-                    Text("جاري التحميل...", modifier = Modifier.padding(16.dp))
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(32.dp),
+                        contentAlignment = androidx.compose.ui.Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
+                }
+                is DashboardUiState.Empty -> {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(32.dp),
+                        horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = "لا توجد باقات",
+                            style = MaterialTheme.typography.headlineMedium,
+                            modifier = Modifier.padding(bottom = 8.dp)
+                        )
+                        Text(
+                            text = "ابدأ بإضافة باقتك الأولى لتتبع استهلاكك",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
                 }
                 is DashboardUiState.Success -> {
                     PredictionCard(state.prediction)
                 }
                 is DashboardUiState.Error -> {
-                    Text("خطأ: ${state.message}", color = Color.Red, modifier = Modifier.padding(16.dp))
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                    ) {
+                        Text(
+                            text = "خطأ: ${state.message}",
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                        Button(
+                            onClick = { viewModel.refresh() },
+                            modifier = Modifier.padding(top = 8.dp)
+                        ) {
+                            Text("إعادة المحاولة")
+                        }
+                    }
                 }
             }
 
